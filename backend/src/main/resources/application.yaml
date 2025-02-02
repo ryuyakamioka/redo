@@ -1,0 +1,17 @@
+spring:
+  application:
+    name: redo
+  datasource:
+    url: jdbc:postgresql://localhost:5432/redo_db
+    username: redo
+    password: mypassword
+    driver-class-name: org.postgresql.Driver
+
+  jdbc:
+    template:
+      query-timeout: 30
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+    locations: classpath:db/migration
