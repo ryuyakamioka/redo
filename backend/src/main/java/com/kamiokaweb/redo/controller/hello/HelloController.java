@@ -1,4 +1,4 @@
-package com.kamiokaweb.redo.controller;
+package com.kamiokaweb.redo.controller.hello;
 
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;

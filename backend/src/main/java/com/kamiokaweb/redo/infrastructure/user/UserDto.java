@@ -1,4 +1,4 @@
-package com.kamiokaweb.redo.infrastructure;
+package com.kamiokaweb.redo.infrastructure.user;
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.relational.core.mapping.Table;
