@@ -3,7 +3,7 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main
+      - main  # main ブランチにプッシュされたときに実行
 
 jobs:
   deploy:
@@ -16,15 +16,27 @@ jobs:
       - name: Setup SSH
         run: |
           mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" > ~/.ssh/id_rsa
+          echo "${{ secrets.EC2_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts
+          echo "EC2_HOST: ${{ secrets.EC2_HOST }}"  # デバッグ用に表示
+          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || (echo "Error scanning EC2 host" && exit 1)
 
       - name: Deploy to EC2
         run: |
-          ssh ${{ secrets.EC2_USER }}@${{ secrets.EC2_HOST }} << 'EOF'
-          cd /path/to/your/app
-          git pull origin main
-          ./mvnw package -DskipTests
-          sudo systemctl restart your-springboot-service
+          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+          set -e  # エラーが発生したら即終了
+          
+          # アプリのディレクトリへ移動（必要なら変更）
+          cd /home/ec2-user/app || exit 1
+
+          # GitHub から最新のコードを取得
+          git pull origin main || exit 1
+
+          # JAR ファイルをビルド
+          ./mvnw clean package -DskipTests || exit 1
+
+          # systemctl 経由で Spring Boot アプリを再起動
+          sudo systemctl restart springboot-app.service || exit 1
+
+          echo "Deployment successful!"
           EOF
