@@ -34,6 +34,7 @@ jobs:
 
           # JAR ファイルをビルド
           cd backend || exit 1
+          chmod +x mvnw
           ./mvnw clean package -DskipTests || exit 1
 
           # systemctl 経由で Spring Boot アプリを再起動
