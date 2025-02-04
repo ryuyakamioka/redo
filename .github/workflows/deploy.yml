@@ -27,7 +27,7 @@ jobs:
           set -e  # エラーが発生したら即終了
           
           # アプリのディレクトリへ移動（必要なら変更）
-          cd /home/ec2-user/app || exit 1
+          cd /home/ec2-user/app/redo || exit 1
 
           # GitHub から最新のコードを取得
           git pull origin main || exit 1
