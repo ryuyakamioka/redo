@@ -33,9 +33,8 @@ jobs:
           git pull origin main || exit 1
 
           # JAR ファイルをビルド
-          ./mvnw clean package -DskipTests || exit 1
-
           cd backend || exit 1
+          ./mvnw clean package -DskipTests || exit 1
 
           # systemctl 経由で Spring Boot アプリを再起動
           sudo systemctl restart springboot-app.service || exit 1
