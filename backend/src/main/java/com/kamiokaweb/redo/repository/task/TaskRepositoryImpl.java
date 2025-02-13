@@ -6,7 +6,10 @@ import com.kamiokaweb.redo.model.task.Task;
 import com.kamiokaweb.redo.model.task.TaskId;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.StreamSupport;
 
 @Repository
 public class TaskRepositoryImpl implements TaskRepository {
@@ -28,5 +31,12 @@ public class TaskRepositoryImpl implements TaskRepository {
     public Optional<Task> get(TaskId taskId) {
         var dto = taskAccessor.findById(taskId.value());
         return dto.map(TaskDto::from);
+    }
+
+    @Override
+    public List<Task> getList() {
+        return StreamSupport.stream(taskAccessor.findAll().spliterator(), false)
+                .map(TaskDto::from)
+                .collect(Collectors.toList());
     }
 }
