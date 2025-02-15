@@ -1,11 +1,19 @@
 import { defineStore } from "pinia";
 import axios from "axios";
+import { useRuntimeConfig } from "#app";
 import {
   Task,
   TaskListResponse,
   TaskResponse,
   TaskRequest,
 } from "~/types/task";
+
+export const useApi = () => {
+  const config = useRuntimeConfig();
+  return axios.create({
+    baseURL: config.public.apiBase,
+  });
+};
 
 export const useTaskStore = defineStore("task", {
   state: () => ({
@@ -14,19 +22,18 @@ export const useTaskStore = defineStore("task", {
   }),
   actions: {
     async fetchTasks() {
-      try {
-        const response = await axios.get<TaskListResponse>("/tasks", {
-          baseURL: "http://15.168.89.85:8080",
-        });
-        this.tasks = response.data.taskList;
-      } catch (error) {
-        console.error("タスクの取得エラー:", error);
-      }
-    },
+        try {
+          const api = useApi();
+          const response = await api.get<TaskListResponse>("/tasks");
+          this.tasks = response.data.taskList;
+        } catch (error) {
+          console.error("タスクの取得エラー:", error);
+        }
+      },
     async fetchTask(taskId: number) {
       try {
         const response = await axios.get<TaskResponse>(
-          `http://15.168.89.85:8080/task/${taskId}`
+          `task/${taskId}`
         );
         this.task = response.data.task;
       } catch (error) {
@@ -37,7 +44,7 @@ export const useTaskStore = defineStore("task", {
       try {
         const taskRequest: TaskRequest = { task };
         const response = await axios.post(
-          "http://15.168.89.85:8080/task",
+          "/task",
           taskRequest
         );
         if (response.status === 200) {
