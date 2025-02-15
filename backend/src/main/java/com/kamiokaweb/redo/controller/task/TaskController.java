@@ -8,6 +8,7 @@ import com.kamiokaweb.redo.usecase.TaskUseCase;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
+@CrossOrigin(origins = "http://localhost:3000")
 public class TaskController {
 
     private final TaskUseCase taskUseCase;
