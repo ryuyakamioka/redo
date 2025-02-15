@@ -22,19 +22,16 @@ export const useTaskStore = defineStore("task", {
   }),
   actions: {
     async fetchTasks() {
-        try {
-          const api = useApi();
-          const response = await api.get<TaskListResponse>("/tasks");
-          this.tasks = response.data.taskList;
-        } catch (error) {
-          console.error("タスクの取得エラー:", error);
-        }
-      },
+      try {
+        const response = await useApi().get<TaskListResponse>("/tasks");
+        this.tasks = response.data.taskList;
+      } catch (error) {
+        console.error("タスクの取得エラー:", error);
+      }
+    },
     async fetchTask(taskId: number) {
       try {
-        const response = await axios.get<TaskResponse>(
-          `task/${taskId}`
-        );
+        const response = await useApi().get<TaskResponse>(`task/${taskId}`);
         this.task = response.data.task;
       } catch (error) {
         console.error("タスクの取得エラー:", error);
@@ -43,10 +40,7 @@ export const useTaskStore = defineStore("task", {
     async createTask(task: Task) {
       try {
         const taskRequest: TaskRequest = { task };
-        const response = await axios.post(
-          "/task",
-          taskRequest
-        );
+        const response = await useApi().post("/task", taskRequest);
         if (response.status === 200) {
           await this.fetchTasks();
         }
