@@ -4,8 +4,8 @@ on:
   push:
     branches:
       - main  # main ブランチにプッシュされたときに実行
-    paths:
-      - 'backend/**'
+    #paths:
+    #  - 'backend/**'
 
 jobs:
   deploy:
@@ -41,6 +41,11 @@ jobs:
 
           # systemctl 経由で Spring Boot アプリを再起動
           sudo systemctl restart springboot-app.service || exit 1
+
+          # Nuxt3 アプリビルド
+          cd /home/ec2-user/app/redo/frontend || exit 1
+          sudo pnpm build || exit 1
+          sudo pm2 restart redo_front || exit 1
 
           echo "Deployment successful!"
           EOF
