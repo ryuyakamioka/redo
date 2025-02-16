@@ -24,7 +24,13 @@ jobs:
           echo "EC2_HOST: ${{ secrets.EC2_HOST }}" # デバッグ用に表示
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || (echo "Error scanning EC2 host" && exit 1)
 
-      - name: Install pnpm # pnpm インストールを追加
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '16'
+          cache: 'pnpm' # pnpm のキャッシュを有効化
+          
+      - name: Install pnpm (System-wide)
         run: npm install -g pnpm
 
       - name: Deploy to EC2
@@ -48,8 +54,8 @@ jobs:
 
           # Nuxt3 アプリビルド
           cd /home/ec2-user/app/redo/frontend || exit 1
-          sudo pnpm build || exit 1
-          sudo pm2 restart redo_front || exit 1
+          pnpm build || exit 1
+          pm2 restart redo_front || exit 1
 
           echo "Deployment successful!"
           EOF
