@@ -9,9 +9,4 @@ public class HelloController {
     public String hello() {
         return "Hello World!";
     }
-
-    @GetMapping("/api/hello")
-    public String hello2() {
-        return "Hello World2!";
-    }
 }
