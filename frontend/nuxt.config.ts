@@ -5,7 +5,7 @@ export default defineNuxtConfig({
   modules: ['@pinia/nuxt'],
   runtimeConfig: {
     public: {
-      apiBase: "http://15.168.89.85:8080/api",
+      apiBase: "http://15.168.89.85/api",
     },
   },
 })
