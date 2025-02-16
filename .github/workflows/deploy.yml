@@ -24,11 +24,12 @@ jobs:
           echo "EC2_HOST: ${{ secrets.EC2_HOST }}" # デバッグ用に表示
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || (echo "Error scanning EC2 host" && exit 1)
 
-      - name: Install Node.js
-        uses: actions/setup-node@v3
+      - name: Install Node.js and pnpm
+        uses: pnpm/action-setup@v4
         with:
-          node-version: '22'
-          cache: 'pnpm' # pnpm のキャッシュを有効化
+          version: 9 # pnpm のバージョンを指定
+          node-version: 22 # Node.js のバージョンを指定
+          cache: 'pnpm'
           
       - name: Install pnpm (System-wide)
         run: npm install -g pnpm
