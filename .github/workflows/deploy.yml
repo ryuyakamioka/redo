@@ -3,10 +3,11 @@ name: Deploy to EC2
 on:
   push:
     branches:
-      - main  # main ブランチにプッシュされたときに実行
-    #paths:
-    #  - 'backend/**'
-
+      - main # main ブランチにプッシュされたときに実行
+    paths:
+      - 'backend/**'
+      - 'frontend/**'
+      
 jobs:
   deploy:
     runs-on: ubuntu-latest
@@ -20,15 +21,18 @@ jobs:
           mkdir -p ~/.ssh
           echo "${{ secrets.EC2_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
           chmod 600 ~/.ssh/id_rsa
-          echo "EC2_HOST: ${{ secrets.EC2_HOST }}"  # デバッグ用に表示
+          echo "EC2_HOST: ${{ secrets.EC2_HOST }}" # デバッグ用に表示
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || (echo "Error scanning EC2 host" && exit 1)
+
+      - name: Install pnpm # pnpm インストールを追加
+        run: curl -fsSL https://get.pnpm.io/install.sh | sh -
 
       - name: Deploy to EC2
         run: |
           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
-          set -e  # エラーが発生したら即終了
-          
-          # アプリのディレクトリへ移動（必要なら変更）
+          set -e # エラーが発生したら即終了
+
+          # アプリのディレクトリへ移動
           cd /home/ec2-user/app/redo || exit 1
 
           # GitHub から最新のコードを取得
