@@ -27,7 +27,7 @@ jobs:
       - name: Install Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '16'
+          node-version: '22'
           cache: 'pnpm' # pnpm のキャッシュを有効化
           
       - name: Install pnpm (System-wide)
