@@ -4,9 +4,9 @@ on:
   push:
     branches:
       - main # main ブランチにプッシュされたときに実行
-    paths:
-      - 'backend/**'
-      - 'frontend/**'
+    #paths:
+    #  - 'backend/**'
+    #  - 'frontend/**'
       
 jobs:
   deploy:
@@ -25,7 +25,8 @@ jobs:
           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || (echo "Error scanning EC2 host" && exit 1)
 
       - name: Install pnpm # pnpm インストールを追加
-        run: curl -fsSL https://get.pnpm.io/install.sh | sh -
+        run: |
+           SHELL=/bin/bash curl -fsSL https://get.pnpm.io/install.sh | sh -
 
       - name: Deploy to EC2
         run: |
