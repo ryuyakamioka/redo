@@ -5,8 +5,8 @@ on:
     branches:
       - main # main ブランチにプッシュされたときに実行
     #paths:
-    #  - 'backend/**'
-    #  - 'frontend/**'
+      - 'backend/**'
+      - 'frontend/**'
       
 jobs:
   deploy:
