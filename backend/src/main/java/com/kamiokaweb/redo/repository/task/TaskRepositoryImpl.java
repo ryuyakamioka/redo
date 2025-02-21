@@ -39,4 +39,10 @@ public class TaskRepositoryImpl implements TaskRepository {
                 .map(TaskDto::from)
                 .collect(Collectors.toList());
     }
+
+    @Override
+    public void delete(TaskId taskId) {
+        var task = taskAccessor.findById(taskId.value());
+        taskAccessor.delete(task.get());
+    }
 }

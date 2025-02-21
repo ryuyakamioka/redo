@@ -26,4 +26,8 @@ public class TaskUseCase {
     public void register(Task task) {
         taskRepository.register(task);
     }
+
+    public void delete(TaskId taskId) {
+        taskRepository.delete(taskId);
+    }
 }
