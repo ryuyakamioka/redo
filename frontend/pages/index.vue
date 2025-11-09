@@ -58,8 +58,11 @@
                 <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
                   タスク名
                 </th>
-                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
                   ステータス
+                </th>
+                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  操作
                 </th>
               </tr>
             </thead>
@@ -75,7 +78,7 @@
                 <td class="px-4 py-2 text-sm text-gray-900 border-r border-gray-200">
                   {{ task.taskTitle.value }}
                 </td>
-                <td class="px-4 py-2 whitespace-nowrap text-sm">
+                <td class="px-4 py-2 whitespace-nowrap text-sm border-r border-gray-200">
                   <span
                     :class="{
                       'inline-flex items-center px-2 py-1 rounded text-xs font-medium': true,
@@ -86,6 +89,14 @@
                   >
                     {{ task.taskStatus === 'IN_PROGRESS' ? '作業中' : task.taskStatus === 'DONE' ? '完了' : 'TODO' }}
                   </span>
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap text-sm">
+                  <button
+                    @click="deleteTask(task.taskId)"
+                    class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+                  >
+                    削除
+                  </button>
                 </td>
               </tr>
             </tbody>
@@ -121,6 +132,12 @@ const createTask = async () => {
   await taskStore.createTask(task);
   newTaskTitle.value = "";
   newTaskStatus.value = "TODO";
+};
+
+const deleteTask = async (taskId: number) => {
+  if (confirm('このタスクを削除してもよろしいですか？')) {
+    await taskStore.deleteTask(taskId);
+  }
 };
 
 const tasks = computed(() => taskStore.tasks);
