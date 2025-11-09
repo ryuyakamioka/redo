@@ -1,36 +1,116 @@
 <template>
-  <div>
-    <h1>タスク一覧</h1>
-    <ul v-if="tasks.length > 0">
-      <li v-for="task in tasks" :key="task.taskId.value">
-        <TaskItem :task="task" />
-      </li>
-    </ul>
-    <p v-else>タスクはありません。</p>
+  <div class="min-h-screen bg-gray-50">
+    <!-- ヘッダー -->
+    <header class="bg-white border-b border-gray-200">
+      <div class="container mx-auto px-6 py-4">
+        <div class="flex items-center justify-between">
+          <h1 class="text-2xl font-bold text-gray-800">タスク管理</h1>
+          <div class="text-sm text-gray-600">
+            全 <span class="font-semibold text-gray-900">{{ tasks.length }}</span> 件
+          </div>
+        </div>
+      </div>
+    </header>
 
-    <h2>タスク登録</h2>
-    <form @submit.prevent="createTask">
-      <input type="text" v-model="newTaskTitle" placeholder="タスク名" />
-      <select v-model="newTaskStatus">
-        <option value="TODO">TODO</option>
-        <option value="IN_PROGRESS">IN_PROGRESS</option>
-        <option value="DONE">DONE</option>
-      </select>
-      <button type="submit">登録</button>
-    </form>
+    <!-- メインコンテンツ -->
+    <div class="container mx-auto px-6 py-6">
+      <!-- タスク登録フォーム -->
+      <div class="mb-6 bg-white rounded-lg shadow border border-gray-200">
+        <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+          <h2 class="font-semibold text-gray-700">新規タスク登録</h2>
+        </div>
+        <div class="p-4">
+          <form @submit.prevent="createTask" class="flex gap-3">
+            <input
+              type="text"
+              v-model="newTaskTitle"
+              placeholder="タスク名を入力"
+              class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
+              required
+            />
+            <select
+              v-model="newTaskStatus"
+              class="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent bg-white"
+            >
+              <option value="TODO">TODO</option>
+              <option value="IN_PROGRESS">作業中</option>
+              <option value="DONE">完了</option>
+            </select>
+            <button
+              type="submit"
+              class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+            >
+              登録
+            </button>
+          </form>
+        </div>
+      </div>
+
+      <!-- タスクテーブル -->
+      <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
+        <div v-if="tasks.length > 0" class="overflow-x-auto">
+          <table class="min-w-full">
+            <thead class="bg-gray-50 border-b border-gray-200">
+              <tr>
+                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
+                  ID
+                </th>
+                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
+                  タスク名
+                </th>
+                <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider">
+                  ステータス
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200">
+              <tr
+                v-for="task in tasks"
+                :key="task.taskId.value"
+                class="hover:bg-gray-50 transition-colors"
+              >
+                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                  {{ task.taskId.value }}
+                </td>
+                <td class="px-4 py-2 text-sm text-gray-900 border-r border-gray-200">
+                  {{ task.taskTitle.value }}
+                </td>
+                <td class="px-4 py-2 whitespace-nowrap text-sm">
+                  <span
+                    :class="{
+                      'inline-flex items-center px-2 py-1 rounded text-xs font-medium': true,
+                      'bg-gray-100 text-gray-700': task.taskStatus === 'TODO',
+                      'bg-blue-100 text-blue-700': task.taskStatus === 'IN_PROGRESS',
+                      'bg-green-100 text-green-700': task.taskStatus === 'DONE'
+                    }"
+                  >
+                    {{ task.taskStatus === 'IN_PROGRESS' ? '作業中' : task.taskStatus === 'DONE' ? '完了' : 'TODO' }}
+                  </span>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+
+        <div v-else class="px-6 py-12">
+          <div class="text-center">
+            <p class="text-gray-500">タスクはありません</p>
+          </div>
+        </div>
+      </div>
+    </div>
   </div>
 </template>
 
 <script setup lang="ts">
 import { useTaskStore } from "~/stores/task";
 import { ref, computed } from "vue";
-import TaskItem from "~/components/TaskItem.vue";
 
 const taskStore = useTaskStore();
 await taskStore.fetchTasks();
 
 const newTaskTitle = ref("");
-const newTaskStatus = ref("TODO");
+const newTaskStatus = ref<"TODO" | "IN_PROGRESS" | "DONE">("TODO");
 
 const createTask = async () => {
   const task = {
