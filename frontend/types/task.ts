@@ -7,7 +7,7 @@ export interface TaskTitle {
 }
 
 export interface Task {
-  taskId: TaskId;
+  taskId: number;  // @JsonValueのため直接数値
   taskTitle: TaskTitle;
   taskStatus: "TODO" | "IN_PROGRESS" | "DONE";
 }

@@ -66,11 +66,11 @@
             <tbody class="divide-y divide-gray-200">
               <tr
                 v-for="task in tasks"
-                :key="task.taskId.value"
+                :key="task.taskId"
                 class="hover:bg-gray-50 transition-colors"
               >
                 <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                  {{ task.taskId.value }}
+                  {{ task.taskId }}
                 </td>
                 <td class="px-4 py-2 text-sm text-gray-900 border-r border-gray-200">
                   {{ task.taskTitle.value }}
@@ -114,7 +114,7 @@ const newTaskStatus = ref<"TODO" | "IN_PROGRESS" | "DONE">("TODO");
 
 const createTask = async () => {
   const task = {
-    taskId: { value: 0 }, // サーバー側で自動採番されるため0を設定
+    taskId: 0, // サーバー側で自動採番されるため0を設定
     taskTitle: { value: newTaskTitle.value },
     taskStatus: newTaskStatus.value,
   };
