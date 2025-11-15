@@ -325,7 +325,11 @@ const createTask = async () => {
       const selectedItem = items.value.find(i => i.itemId === item.itemId);
       return {
         taskItemId: null,
-        item: selectedItem!,
+        item: {
+          itemId: selectedItem!.itemId,
+          itemName: { value: selectedItem!.itemName },
+          unitPrice: { value: selectedItem!.unitPrice }
+        },
         quantity: { value: item.quantity },
         amount: { value: item.amount }
       };
@@ -336,7 +340,16 @@ const createTask = async () => {
     taskTitle: { value: newTask.value.title },
     taskStatus: newTask.value.status,
     requestDate: newTask.value.requestDate,
-    client: selectedClient || null,
+    client: selectedClient ? {
+      clientId: selectedClient.clientId,
+      clientName: { value: selectedClient.clientName },
+      clientAbbreviation: { value: selectedClient.clientAbbreviation },
+      company: {
+        companyId: selectedClient.company.companyId,
+        companyName: { value: selectedClient.company.companyName },
+        withholdingTax: selectedClient.company.withholdingTax
+      }
+    } : null,
     note: newTask.value.note || null,
     taskItems: taskItems,
     expectedDeliveryDate: newTask.value.expectedDeliveryDate,
