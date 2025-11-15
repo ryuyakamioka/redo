@@ -83,7 +83,7 @@
               >
                 <option :value="null">選択してください</option>
                 <option v-for="client in clients" :key="client.clientId" :value="client.clientId">
-                  {{ client.clientName.value }} ({{ client.clientAbbreviation.value }}) - {{ client.company.companyName.value }}
+                  {{ client.clientName }} ({{ client.clientAbbreviation }}) - {{ client.company.companyName }}
                 </option>
               </select>
             </div>
@@ -112,7 +112,7 @@
                     >
                       <option :value="null">品目を選択</option>
                       <option v-for="i in items" :key="i.itemId" :value="i.itemId">
-                        {{ i.itemName.value }} ({{ i.unitPrice.value }}円)
+                        {{ i.itemName }} ({{ i.unitPrice }}円)
                       </option>
                     </select>
                   </div>
@@ -206,7 +206,7 @@
                   {{ task.taskTitle.value }}
                 </td>
                 <td class="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
-                  {{ task.client ? task.client.clientName.value : '-' }}
+                  {{ task.client ? task.client.clientName : '-' }}
                 </td>
                 <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
                   {{ task.requestDate || '-' }}
@@ -298,7 +298,7 @@ const updateItemPrice = (index: number) => {
   if (item.itemId) {
     const selectedItem = items.value.find(i => i.itemId === item.itemId);
     if (selectedItem) {
-      item.amount = selectedItem.unitPrice.value * item.quantity;
+      item.amount = selectedItem.unitPrice * item.quantity;
     }
   }
 };
@@ -309,7 +309,7 @@ const updateAmount = (index: number) => {
   if (item.itemId) {
     const selectedItem = items.value.find(i => i.itemId === item.itemId);
     if (selectedItem) {
-      item.amount = selectedItem.unitPrice.value * item.quantity;
+      item.amount = selectedItem.unitPrice * item.quantity;
     }
   }
 };

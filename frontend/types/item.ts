@@ -11,9 +11,9 @@ export interface UnitPrice {
 }
 
 export interface Item {
-  itemId: number;
-  itemName: ItemName;
-  unitPrice: UnitPrice;
+  itemId: number;  // @JsonValueのため直接数値
+  itemName: string;  // @JsonValueのため直接文字列
+  unitPrice: number;  // @JsonValueのため直接数値
 }
 
 export interface ItemListResponse {

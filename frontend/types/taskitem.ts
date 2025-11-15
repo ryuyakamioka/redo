@@ -13,8 +13,8 @@ export interface Amount {
 }
 
 export interface TaskItem {
-  taskItemId: number | null;
+  taskItemId: number | null;  // @JsonValueのため直接数値
   item: Item;
-  quantity: Quantity;
-  amount: Amount;
+  quantity: number;  // @JsonValueのため直接数値
+  amount: number;  // @JsonValueのため直接数値
 }

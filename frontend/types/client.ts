@@ -13,9 +13,9 @@ export interface ClientAbbreviation {
 }
 
 export interface Client {
-  clientId: number;
-  clientName: ClientName;
-  clientAbbreviation: ClientAbbreviation;
+  clientId: number;  // @JsonValueのため直接数値
+  clientName: string;  // @JsonValueのため直接文字列
+  clientAbbreviation: string;  // @JsonValueのため直接文字列
   company: Company;
 }
 

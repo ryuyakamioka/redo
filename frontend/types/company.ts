@@ -7,8 +7,8 @@ export interface CompanyName {
 }
 
 export interface Company {
-  companyId: number;
-  companyName: CompanyName;
+  companyId: number;  // @JsonValueのため直接数値
+  companyName: string;  // @JsonValueのため直接文字列
   withholdingTax: boolean;
 }
 
