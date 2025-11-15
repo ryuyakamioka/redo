@@ -5,8 +5,8 @@
     </div>
     <div class="p-6">
       <form @submit.prevent="handleSubmit" class="space-y-4">
-        <!-- 基本情報 -->
-        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <!-- 第1行: 依頼名、依頼人、納品予定日 -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">依頼名 <span class="text-red-500">*</span></label>
             <input
@@ -18,27 +18,16 @@
             />
           </div>
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">依頼人</label>
             <select
-              v-model="formData.status"
+              v-model="formData.clientId"
               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
             >
-              <option value="TODO">TODO</option>
-              <option value="IN_PROGRESS">作業中</option>
-              <option value="DONE">完了</option>
+              <option :value="null">選択してください</option>
+              <option v-for="client in clients" :key="client.clientId" :value="client.clientId">
+                {{ client.clientName }} ({{ client.clientAbbreviation }}) - {{ client.company.companyName }}
+              </option>
             </select>
-          </div>
-        </div>
-
-        <!-- 日付と依頼人 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">依頼日</label>
-            <input
-              type="date"
-              v-model="formData.requestDate"
-              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
           </div>
           <div>
             <label class="block text-sm font-medium text-gray-700 mb-1">納品予定日</label>
@@ -48,39 +37,6 @@
               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
-          <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">納品日</label>
-            <input
-              type="date"
-              v-model="formData.deliveryDate"
-              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-            />
-          </div>
-        </div>
-
-        <!-- 依頼人選択 -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">依頼人</label>
-          <select
-            v-model="formData.clientId"
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-          >
-            <option :value="null">選択してください</option>
-            <option v-for="client in clients" :key="client.clientId" :value="client.clientId">
-              {{ client.clientName }} ({{ client.clientAbbreviation }}) - {{ client.company.companyName }}
-            </option>
-          </select>
-        </div>
-
-        <!-- メモ -->
-        <div>
-          <label class="block text-sm font-medium text-gray-700 mb-1">メモ</label>
-          <textarea
-            v-model="formData.note"
-            placeholder="希望記入欄"
-            rows="3"
-            class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-          ></textarea>
         </div>
 
         <!-- 依頼明細 -->
@@ -135,6 +91,72 @@
           </div>
         </div>
 
+        <!-- 詳細オプション（トグル） -->
+        <div class="border-t pt-4">
+          <button
+            type="button"
+            @click="showAdvanced = !showAdvanced"
+            class="flex items-center text-sm text-gray-600 hover:text-gray-900 transition-colors"
+          >
+            <svg
+              class="w-4 h-4 mr-2 transition-transform"
+              :class="{ 'rotate-90': showAdvanced }"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7" />
+            </svg>
+            詳細オプション
+          </button>
+
+          <div v-show="showAdvanced" class="mt-4 space-y-4 pl-6 border-l-2 border-gray-200">
+            <!-- ステータス -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
+              <select
+                v-model="formData.status"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              >
+                <option value="TODO">TODO</option>
+                <option value="IN_PROGRESS">作業中</option>
+                <option value="DONE">完了</option>
+              </select>
+            </div>
+
+            <!-- 依頼日と納品日 -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">依頼日</label>
+                <input
+                  type="date"
+                  v-model="formData.requestDate"
+                  class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">納品日</label>
+                <input
+                  type="date"
+                  v-model="formData.deliveryDate"
+                  class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+
+            <!-- メモ -->
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">メモ</label>
+              <textarea
+                v-model="formData.note"
+                placeholder="希望記入欄"
+                rows="3"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              ></textarea>
+            </div>
+          </div>
+        </div>
+
         <!-- 登録ボタン -->
         <div class="flex justify-end">
           <button
@@ -173,6 +195,8 @@ const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: "submit", data: FormData): void;
 }>();
+
+const showAdvanced = ref(false);
 
 const formData = ref<FormData>({
   title: "",
