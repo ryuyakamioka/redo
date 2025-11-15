@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface ClientRepository {
     Optional<Client> get(ClientId clientId);
     List<Client> getList();
+    Client save(Client client);
+    void delete(ClientId clientId);
 }

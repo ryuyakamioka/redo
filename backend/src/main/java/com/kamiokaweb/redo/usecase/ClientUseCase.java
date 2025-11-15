@@ -17,4 +17,16 @@ public class ClientUseCase {
     public List<Client> getList() {
         return clientRepository.getList();
     }
+
+    public Client create(Client client) {
+        return clientRepository.save(client);
+    }
+
+    public Client update(Client client) {
+        return clientRepository.save(client);
+    }
+
+    public void delete(Long clientId) {
+        clientRepository.delete(new com.kamiokaweb.redo.model.client.ClientId(clientId));
+    }
 }

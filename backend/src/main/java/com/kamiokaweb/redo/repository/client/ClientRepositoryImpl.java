@@ -36,4 +36,24 @@ public class ClientRepositoryImpl implements ClientRepository {
                         .orElseThrow())
                 .toList();
     }
+
+    @Override
+    public Client save(Client client) {
+        ClientDto dto = new ClientDto(
+                client.clientId() != null ? client.clientId().value() : null,
+                client.clientName().value(),
+                client.clientAbbreviation().value(),
+                client.company().companyId().value(),
+                null
+        );
+        ClientDto saved = clientAccessor.save(dto);
+        return companyAccessor.findById(saved.companyId())
+                .map(companyDto -> saved.from(companyDto.from()))
+                .orElseThrow();
+    }
+
+    @Override
+    public void delete(ClientId clientId) {
+        clientAccessor.deleteById(clientId.value());
+    }
 }
