@@ -32,6 +32,11 @@ public class TaskController {
         taskUseCase.register(taskRequest.task());
     }
 
+    @PutMapping("/task/{taskId}")
+    public void updateTask(@PathVariable Long taskId, @RequestBody TaskRequest taskRequest) {
+        taskUseCase.update(taskRequest.task());
+    }
+
     @DeleteMapping("/task/{taskId}")
     public void deleteTask(@PathVariable Long taskId) {
         taskUseCase.delete(new TaskId(taskId));

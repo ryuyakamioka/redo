@@ -40,6 +40,18 @@ export const useTaskStore = defineStore("task", {
         console.error("依頼の作成エラー:", error);
       }
     },
+    async updateTask(taskId: number, task: any) {
+      try {
+        const taskRequest = { task };
+        const response = await useApi().put(`/task/${taskId}`, taskRequest);
+        if (response.status === 200) {
+          await this.fetchTasks();
+        }
+      } catch (error) {
+        console.error("依頼の更新エラー:", error);
+        throw error;
+      }
+    },
     async deleteTask(taskId: number) {
       try {
         const response = await useApi().delete(`/task/${taskId}`);

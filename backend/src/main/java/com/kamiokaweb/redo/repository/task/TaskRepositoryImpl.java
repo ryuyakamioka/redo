@@ -43,6 +43,11 @@ public class TaskRepositoryImpl implements TaskRepository {
     public void register(Task task) {
         var savedTask = taskAccessor.save(new TaskDto(task));
 
+        // 既存の依頼明細を削除（更新の場合）
+        if (task.taskId() != null && task.taskId().value() != null) {
+            taskItemAccessor.deleteByTaskId(task.taskId().value());
+        }
+
         // 依頼明細を保存
         if (task.taskItems() != null && !task.taskItems().isEmpty()) {
             task.taskItems().forEach(taskItem -> {

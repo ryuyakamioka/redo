@@ -41,10 +41,11 @@
         </span>
       </td>
     </tr>
-    <!-- メモと品目の詳細行 -->
+    <!-- メモと品目の詳細行 / 編集フォーム -->
     <tr v-if="isExpanded" class="bg-gray-50">
-      <td colspan="8" class="px-4 py-3">
-        <div class="space-y-3">
+      <td colspan="8" class="px-4 py-3" @click.stop>
+        <!-- 表示モード -->
+        <div v-if="!isEditMode" class="space-y-3">
           <!-- メモ -->
           <div v-if="task.note" class="text-sm">
             <span class="font-medium text-gray-700">メモ:</span>
@@ -62,13 +63,158 @@
               </div>
             </div>
           </div>
-          <!-- 削除ボタン -->
-          <div class="pt-2 border-t border-gray-300">
+          <!-- ボタン -->
+          <div class="pt-2 border-t border-gray-300 flex gap-2">
             <button
-              @click.stop="$emit('delete', task.taskId)"
+              @click="startEdit"
+              class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
+            >
+              この依頼を編集
+            </button>
+            <button
+              @click="$emit('delete', task.taskId)"
               class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
             >
               この依頼を削除
+            </button>
+          </div>
+        </div>
+
+        <!-- 編集モード -->
+        <div v-else class="space-y-4">
+          <div class="text-sm font-semibold text-gray-700 mb-3">依頼の編集</div>
+
+          <!-- 第1行: 依頼名、依頼人、納品予定日 -->
+          <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">依頼名 <span class="text-red-500">*</span></label>
+              <input
+                type="text"
+                v-model="formData.title"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                required
+              />
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">依頼人</label>
+              <select
+                v-model="formData.clientId"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
+              >
+                <option :value="null">選択してください</option>
+                <option v-for="client in clients" :key="client.clientId" :value="client.clientId">
+                  {{ client.clientName }} ({{ client.clientAbbreviation }})
+                </option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">納品予定日</label>
+              <input
+                type="date"
+                v-model="formData.expectedDeliveryDate"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              />
+            </div>
+          </div>
+
+          <!-- 依頼明細 -->
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-2">依頼明細</label>
+            <div class="space-y-2">
+              <div v-for="(item, index) in formData.items" :key="index" class="flex gap-2 items-end">
+                <div class="flex-1">
+                  <label v-if="index === 0" class="block text-xs text-gray-600 mb-1">品目</label>
+                  <select
+                    v-model="item.itemId"
+                    @change="updateItemPrice(index)"
+                    class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
+                  >
+                    <option :value="null">品目を選択</option>
+                    <option v-for="i in items" :key="i.itemId" :value="i.itemId">
+                      {{ i.itemName }} ({{ i.unitPrice }}円)
+                    </option>
+                  </select>
+                </div>
+                <div class="w-24">
+                  <label v-if="index === 0" class="block text-xs text-gray-600 mb-1">件数</label>
+                  <input
+                    type="number"
+                    v-model.number="item.quantity"
+                    @input="updateAmount(index)"
+                    class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                </div>
+                <div class="w-32">
+                  <label v-if="index === 0" class="block text-xs text-gray-600 mb-1">金額</label>
+                  <input
+                    type="number"
+                    v-model.number="item.amount"
+                    class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+                  />
+                </div>
+                <button
+                  type="button"
+                  @click="removeItem(index)"
+                  class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors text-xs"
+                >
+                  削除
+                </button>
+              </div>
+              <button
+                type="button"
+                @click="addItem"
+                class="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              >
+                + 明細を追加
+              </button>
+            </div>
+          </div>
+
+          <!-- 詳細オプション -->
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
+              <select
+                v-model="formData.status"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white text-sm"
+              >
+                <option value="TODO">TODO</option>
+                <option value="IN_PROGRESS">作業中</option>
+                <option value="DONE">完了</option>
+              </select>
+            </div>
+            <div>
+              <label class="block text-sm font-medium text-gray-700 mb-1">依頼日</label>
+              <input
+                type="date"
+                v-model="formData.requestDate"
+                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+              />
+            </div>
+          </div>
+
+          <div>
+            <label class="block text-sm font-medium text-gray-700 mb-1">メモ</label>
+            <textarea
+              v-model="formData.note"
+              rows="3"
+              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm"
+            ></textarea>
+          </div>
+
+          <!-- ボタン -->
+          <div class="flex justify-end gap-2 pt-2 border-t border-gray-300">
+            <button
+              @click="cancelEdit"
+              class="px-4 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition-colors"
+            >
+              キャンセル
+            </button>
+            <button
+              @click="saveEdit"
+              class="px-4 py-2 bg-blue-600 text-white text-sm rounded hover:bg-blue-700 transition-colors"
+            >
+              保存
             </button>
           </div>
         </div>
@@ -78,20 +224,135 @@
 
 <script setup lang="ts">
 import type { Task } from "~/types/task";
+import type { Client } from "~/types/client";
+import type { Item } from "~/types/item";
 
 interface Props {
   task: Task;
   isExpanded: boolean;
+  clients: Client[];
+  items: Item[];
 }
 
 const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: "toggleExpanded", taskId: number): void;
+  (e: "update", taskId: number, data: any): void;
   (e: "delete", taskId: number): void;
 }>();
 
+const isEditMode = ref(false);
+
+const formData = ref<any>({
+  title: "",
+  status: "TODO",
+  requestDate: "",
+  expectedDeliveryDate: "",
+  deliveryDate: null,
+  clientId: null,
+  note: "",
+  items: []
+});
+
 const toggleExpanded = () => {
   emit("toggleExpanded", props.task.taskId);
+};
+
+const startEdit = () => {
+  isEditMode.value = true;
+  formData.value = {
+    title: props.task.taskTitle.value,
+    status: props.task.taskStatus,
+    requestDate: props.task.requestDate || "",
+    expectedDeliveryDate: props.task.expectedDeliveryDate || "",
+    deliveryDate: props.task.deliveryDate || null,
+    clientId: props.task.client?.clientId || null,
+    note: props.task.note || "",
+    items: props.task.taskItems?.map(ti => ({
+      itemId: ti.item.itemId,
+      quantity: ti.quantity,
+      amount: ti.amount
+    })) || []
+  };
+  if (formData.value.items.length === 0) {
+    formData.value.items.push({ itemId: null, quantity: 1, amount: 0 });
+  }
+};
+
+const cancelEdit = () => {
+  isEditMode.value = false;
+};
+
+const saveEdit = () => {
+  const selectedClient = props.clients.find(c => c.clientId === formData.value.clientId);
+
+  const taskItems = formData.value.items
+    .filter((item: any) => item.itemId !== null)
+    .map((item: any) => {
+      const selectedItem = props.items.find(i => i.itemId === item.itemId);
+      return {
+        taskItemId: null,
+        item: {
+          itemId: { value: selectedItem!.itemId },
+          itemName: { value: selectedItem!.itemName },
+          unitPrice: { value: selectedItem!.unitPrice }
+        },
+        quantity: { value: item.quantity },
+        amount: { value: item.amount }
+      };
+    });
+
+  const task = {
+    taskId: { value: props.task.taskId },
+    taskTitle: { value: formData.value.title },
+    taskStatus: formData.value.status,
+    requestDate: formData.value.requestDate,
+    client: selectedClient ? {
+      clientId: { value: selectedClient.clientId },
+      clientName: { value: selectedClient.clientName },
+      clientAbbreviation: { value: selectedClient.clientAbbreviation },
+      company: {
+        companyId: { value: selectedClient.company.companyId },
+        companyName: { value: selectedClient.company.companyName },
+        withholdingTax: selectedClient.company.withholdingTax
+      }
+    } : null,
+    note: formData.value.note || null,
+    taskItems: taskItems,
+    expectedDeliveryDate: formData.value.expectedDeliveryDate,
+    deliveryDate: formData.value.deliveryDate
+  };
+
+  emit("update", props.task.taskId, task);
+  isEditMode.value = false;
+};
+
+const addItem = () => {
+  formData.value.items.push({ itemId: null, quantity: 1, amount: 0 });
+};
+
+const removeItem = (index: number) => {
+  formData.value.items.splice(index, 1);
+};
+
+const updateItemPrice = (index: number) => {
+  const item = formData.value.items[index];
+  if (item.itemId) {
+    const selectedItem = props.items.find(i => i.itemId === item.itemId);
+    if (selectedItem) {
+      item.amount = selectedItem.unitPrice * item.quantity;
+    }
+  }
+};
+
+const updateAmount = (index: number) => {
+  const item = formData.value.items[index];
+  if (item.itemId) {
+    const selectedItem = props.items.find(i => i.itemId === item.itemId);
+    if (selectedItem) {
+      item.amount = selectedItem.unitPrice * item.quantity;
+    }
+  }
 };
 
 const calculateTotal = (taskItems: any[]) => {

@@ -13,7 +13,7 @@
         <TaskForm :clients="clients" :items="items" @submit="createTask" />
 
         <!-- 依頼テーブル -->
-        <TaskList :tasks="tasks" @delete="deleteTask" />
+        <TaskList :tasks="tasks" :clients="clients" :items="items" @update="updateTask" @delete="deleteTask" />
       </div>
     </div>
   </div>
@@ -86,6 +86,15 @@ const createTask = async (formData: any) => {
   };
 
   await taskStore.createTask(task);
+};
+
+const updateTask = async (taskId: number, task: any) => {
+  try {
+    await taskStore.updateTask(taskId, task);
+  } catch (error) {
+    console.error("依頼の更新エラー:", error);
+    alert("依頼の更新に失敗しました");
+  }
 };
 
 const deleteTask = async (taskId: number) => {

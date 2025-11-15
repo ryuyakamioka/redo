@@ -27,6 +27,11 @@ public class TaskUseCase {
         taskRepository.register(task);
     }
 
+    public void update(Task task) {
+        // 既存のタスク明細を削除してから新しいものを登録
+        taskRepository.register(task);
+    }
+
     public void delete(TaskId taskId) {
         taskRepository.delete(taskId);
     }

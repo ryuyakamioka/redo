@@ -35,8 +35,11 @@
             v-for="task in tasks"
             :key="task.taskId"
             :task="task"
+            :clients="clients"
+            :items="items"
             :is-expanded="expandedTasks.has(task.taskId)"
             @toggle-expanded="toggleTaskDetail"
+            @update="handleUpdate"
             @delete="handleDelete"
           />
         </tbody>
@@ -53,14 +56,19 @@
 
 <script setup lang="ts">
 import type { Task } from "~/types/task";
+import type { Client } from "~/types/client";
+import type { Item } from "~/types/item";
 import TaskListItem from "./TaskListItem.vue";
 
 interface Props {
   tasks: Task[];
+  clients: Client[];
+  items: Item[];
 }
 
 defineProps<Props>();
 const emit = defineEmits<{
+  (e: "update", taskId: number, data: any): void;
   (e: "delete", taskId: number): void;
 }>();
 
@@ -72,6 +80,10 @@ const toggleTaskDetail = (taskId: number) => {
   } else {
     expandedTasks.value.add(taskId);
   }
+};
+
+const handleUpdate = (taskId: number, data: any) => {
+  emit("update", taskId, data);
 };
 
 const handleDelete = (taskId: number) => {
