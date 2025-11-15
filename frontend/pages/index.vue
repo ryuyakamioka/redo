@@ -194,47 +194,76 @@
               </tr>
             </thead>
             <tbody class="divide-y divide-gray-200">
-              <tr
-                v-for="task in tasks"
-                :key="task.taskId"
-                class="hover:bg-gray-50 transition-colors"
-              >
-                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                  {{ task.taskId }}
-                </td>
-                <td class="px-4 py-2 text-sm text-gray-900 border-r border-gray-200">
-                  {{ task.taskTitle.value }}
-                </td>
-                <td class="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
-                  {{ task.client ? task.client.clientName : '-' }}
-                </td>
-                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                  {{ task.requestDate || '-' }}
-                </td>
-                <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-                  {{ task.expectedDeliveryDate || '-' }}
-                </td>
-                <td class="px-4 py-2 whitespace-nowrap text-sm border-r border-gray-200">
-                  <span
-                    :class="{
-                      'inline-flex items-center px-2 py-1 rounded text-xs font-medium': true,
-                      'bg-gray-100 text-gray-700': task.taskStatus === 'TODO',
-                      'bg-blue-100 text-blue-700': task.taskStatus === 'IN_PROGRESS',
-                      'bg-green-100 text-green-700': task.taskStatus === 'DONE'
-                    }"
-                  >
-                    {{ task.taskStatus === 'IN_PROGRESS' ? '作業中' : task.taskStatus === 'DONE' ? '完了' : 'TODO' }}
-                  </span>
-                </td>
-                <td class="px-4 py-2 whitespace-nowrap text-sm">
-                  <button
-                    @click="deleteTask(task.taskId)"
-                    class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
-                  >
-                    削除
-                  </button>
-                </td>
-              </tr>
+              <template v-for="task in tasks" :key="task.taskId">
+                <tr
+                  @click="toggleTaskDetail(task.taskId)"
+                  class="hover:bg-gray-50 transition-colors cursor-pointer"
+                  :class="{ 'bg-blue-50': expandedTasks.has(task.taskId) }"
+                >
+                  <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                    {{ task.taskId }}
+                  </td>
+                  <td class="px-4 py-2 text-sm text-gray-900 border-r border-gray-200">
+                    <div class="flex items-center">
+                      <span class="mr-2">{{ expandedTasks.has(task.taskId) ? '▼' : '▶' }}</span>
+                      {{ task.taskTitle.value }}
+                    </div>
+                  </td>
+                  <td class="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+                    {{ task.client ? task.client.clientName : '-' }}
+                  </td>
+                  <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                    {{ task.requestDate || '-' }}
+                  </td>
+                  <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
+                    {{ task.expectedDeliveryDate || '-' }}
+                  </td>
+                  <td class="px-4 py-2 whitespace-nowrap text-sm border-r border-gray-200">
+                    <span
+                      :class="{
+                        'inline-flex items-center px-2 py-1 rounded text-xs font-medium': true,
+                        'bg-gray-100 text-gray-700': task.taskStatus === 'TODO',
+                        'bg-blue-100 text-blue-700': task.taskStatus === 'IN_PROGRESS',
+                        'bg-green-100 text-green-700': task.taskStatus === 'DONE'
+                      }"
+                    >
+                      {{ task.taskStatus === 'IN_PROGRESS' ? '作業中' : task.taskStatus === 'DONE' ? '完了' : 'TODO' }}
+                    </span>
+                  </td>
+                  <td class="px-4 py-2 whitespace-nowrap text-sm" @click.stop>
+                    <button
+                      @click="deleteTask(task.taskId)"
+                      class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+                    >
+                      削除
+                    </button>
+                  </td>
+                </tr>
+                <!-- メモと品目の詳細行 -->
+                <tr v-if="expandedTasks.has(task.taskId) && (task.note || (task.taskItems && task.taskItems.length > 0))" class="bg-gray-50">
+                  <td colspan="7" class="px-4 py-3">
+                    <div class="space-y-2">
+                      <!-- メモ -->
+                      <div v-if="task.note" class="text-sm">
+                        <span class="font-medium text-gray-700">メモ:</span>
+                        <span class="text-gray-600 ml-2">{{ task.note }}</span>
+                      </div>
+                      <!-- 品目 -->
+                      <div v-if="task.taskItems && task.taskItems.length > 0">
+                        <div class="font-medium text-gray-700 text-sm mb-1">品目:</div>
+                        <div class="ml-4 space-y-1">
+                          <div v-for="(item, idx) in task.taskItems" :key="idx" class="text-sm text-gray-600">
+                            {{ item.item.itemName }} × {{ item.quantity }}件 = {{ item.amount.toLocaleString() }}円
+                          </div>
+                          <div class="text-sm font-medium text-gray-700 pt-1 border-t border-gray-300">
+                            合計: {{ calculateTotal(task.taskItems).toLocaleString() }}円
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </td>
+                </tr>
+              </template>
             </tbody>
           </table>
         </div>
@@ -281,6 +310,18 @@ const newTask = ref({
 const clients = computed(() => clientStore.clients);
 const items = computed(() => itemStore.items);
 const tasks = computed(() => taskStore.tasks);
+
+// 展開状態を管理
+const expandedTasks = ref<Set<number>>(new Set());
+
+// 行のクリックで展開/折りたたみを切り替え
+const toggleTaskDetail = (taskId: number) => {
+  if (expandedTasks.value.has(taskId)) {
+    expandedTasks.value.delete(taskId);
+  } else {
+    expandedTasks.value.add(taskId);
+  }
+};
 
 // 明細行を追加
 const addItem = () => {
@@ -375,5 +416,10 @@ const deleteTask = async (taskId: number) => {
   if (confirm('この依頼を削除してもよろしいですか？')) {
     await taskStore.deleteTask(taskId);
   }
+};
+
+// 品目の合計金額を計算
+const calculateTotal = (taskItems: any[]) => {
+  return taskItems.reduce((sum, item) => sum + item.amount, 0);
 };
 </script>
