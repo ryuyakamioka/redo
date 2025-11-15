@@ -29,9 +29,9 @@ export const useTaskStore = defineStore("task", {
         console.error("依頼の取得エラー:", error);
       }
     },
-    async createTask(task: Task) {
+    async createTask(task: any) {
       try {
-        const taskRequest: TaskRequest = { task };
+        const taskRequest = { task };
         const response = await useApi().post("/task", taskRequest);
         if (response.status === 200) {
           await this.fetchTasks();
