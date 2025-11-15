@@ -17,4 +17,16 @@ public class CompanyUseCase {
     public List<Company> getList() {
         return companyRepository.getList();
     }
+
+    public Company create(Company company) {
+        return companyRepository.save(company);
+    }
+
+    public Company update(Company company) {
+        return companyRepository.save(company);
+    }
+
+    public void delete(Long companyId) {
+        companyRepository.delete(new com.kamiokaweb.redo.model.company.CompanyId(companyId));
+    }
 }

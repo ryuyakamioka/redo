@@ -30,4 +30,21 @@ public class CompanyRepositoryImpl implements CompanyRepository {
                 .map(CompanyDto::from)
                 .toList();
     }
+
+    @Override
+    public Company save(Company company) {
+        CompanyDto dto = new CompanyDto(
+                company.companyId() != null ? company.companyId().value() : null,
+                company.companyName().value(),
+                company.withholdingTax(),
+                null
+        );
+        CompanyDto saved = companyAccessor.save(dto);
+        return saved.from();
+    }
+
+    @Override
+    public void delete(CompanyId companyId) {
+        companyAccessor.deleteById(companyId.value());
+    }
 }

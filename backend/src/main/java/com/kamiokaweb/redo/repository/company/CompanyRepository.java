@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface CompanyRepository {
     Optional<Company> get(CompanyId companyId);
     List<Company> getList();
+    Company save(Company company);
+    void delete(CompanyId companyId);
 }
