@@ -17,4 +17,16 @@ public class ItemUseCase {
     public List<Item> getList() {
         return itemRepository.getList();
     }
+
+    public Item create(Item item) {
+        return itemRepository.save(item);
+    }
+
+    public Item update(Item item) {
+        return itemRepository.save(item);
+    }
+
+    public void delete(Long itemId) {
+        itemRepository.delete(new com.kamiokaweb.redo.model.item.ItemId(itemId));
+    }
 }

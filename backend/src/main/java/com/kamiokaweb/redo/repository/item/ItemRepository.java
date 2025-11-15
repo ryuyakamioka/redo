@@ -9,4 +9,6 @@ import java.util.Optional;
 public interface ItemRepository {
     Optional<Item> get(ItemId itemId);
     List<Item> getList();
+    Item save(Item item);
+    void delete(ItemId itemId);
 }

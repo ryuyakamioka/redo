@@ -30,4 +30,21 @@ public class ItemRepositoryImpl implements ItemRepository {
                 .map(ItemDto::from)
                 .toList();
     }
+
+    @Override
+    public Item save(Item item) {
+        ItemDto dto = new ItemDto(
+                item.itemId() != null ? item.itemId().value() : null,
+                item.itemName().value(),
+                item.unitPrice().value(),
+                null
+        );
+        ItemDto saved = itemAccessor.save(dto);
+        return saved.from();
+    }
+
+    @Override
+    public void delete(ItemId itemId) {
+        itemAccessor.deleteById(itemId.value());
+    }
 }
