@@ -1,19 +1,11 @@
 import { defineStore } from "pinia";
-import axios from "axios";
-import { useRuntimeConfig } from "#app";
 import {
   Task,
   TaskListResponse,
   TaskResponse,
   TaskRequest,
 } from "~/types/task";
-
-export const useApi = () => {
-  const config = useRuntimeConfig();
-  return axios.create({
-    baseURL: config.public.apiBase,
-  });
-};
+import { useApi } from "~/utils/api";
 
 export const useTaskStore = defineStore("task", {
   state: () => ({
