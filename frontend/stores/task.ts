@@ -26,7 +26,7 @@ export const useTaskStore = defineStore("task", {
         const response = await useApi().get<TaskListResponse>("/tasks");
         this.tasks = response.data.taskList;
       } catch (error) {
-        console.error("タスクの取得エラー:", error);
+        console.error("依頼の取得エラー:", error);
       }
     },
     async fetchTask(taskId: number) {
@@ -34,7 +34,7 @@ export const useTaskStore = defineStore("task", {
         const response = await useApi().get<TaskResponse>(`task/${taskId}`);
         this.task = response.data.task;
       } catch (error) {
-        console.error("タスクの取得エラー:", error);
+        console.error("依頼の取得エラー:", error);
       }
     },
     async createTask(task: Task) {
@@ -45,7 +45,7 @@ export const useTaskStore = defineStore("task", {
           await this.fetchTasks();
         }
       } catch (error) {
-        console.error("タスクの作成エラー:", error);
+        console.error("依頼の作成エラー:", error);
       }
     },
     async deleteTask(taskId: number) {
@@ -55,7 +55,7 @@ export const useTaskStore = defineStore("task", {
           await this.fetchTasks();
         }
       } catch (error) {
-        console.error("タスクの削除エラー:", error);
+        console.error("依頼の削除エラー:", error);
       }
     },
   },

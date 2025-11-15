@@ -4,7 +4,7 @@
     <header class="bg-white border-b border-gray-200">
       <div class="container mx-auto px-6 py-4">
         <div class="flex items-center justify-between">
-          <h1 class="text-2xl font-bold text-gray-800">タスク管理</h1>
+          <h1 class="text-2xl font-bold text-gray-800">依頼管理</h1>
           <div class="text-sm text-gray-600">
             全 <span class="font-semibold text-gray-900">{{ tasks.length }}</span> 件
           </div>
@@ -14,17 +14,17 @@
 
     <!-- メインコンテンツ -->
     <div class="container mx-auto px-6 py-6">
-      <!-- タスク登録フォーム -->
+      <!-- 依頼登録フォーム -->
       <div class="mb-6 bg-white rounded-lg shadow border border-gray-200">
         <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
-          <h2 class="font-semibold text-gray-700">新規タスク登録</h2>
+          <h2 class="font-semibold text-gray-700">新規依頼登録</h2>
         </div>
         <div class="p-4">
           <form @submit.prevent="createTask" class="flex gap-3">
             <input
               type="text"
               v-model="newTaskTitle"
-              placeholder="タスク名を入力"
+              placeholder="依頼名を入力"
               class="flex-1 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent"
               required
             />
@@ -46,7 +46,7 @@
         </div>
       </div>
 
-      <!-- タスクテーブル -->
+      <!-- 依頼テーブル -->
       <div class="bg-white rounded-lg shadow border border-gray-200 overflow-hidden">
         <div v-if="tasks.length > 0" class="overflow-x-auto">
           <table class="min-w-full">
@@ -56,7 +56,7 @@
                   ID
                 </th>
                 <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
-                  タスク名
+                  依頼名
                 </th>
                 <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
                   ステータス
@@ -105,7 +105,7 @@
 
         <div v-else class="px-6 py-12">
           <div class="text-center">
-            <p class="text-gray-500">タスクはありません</p>
+            <p class="text-gray-500">依頼はありません</p>
           </div>
         </div>
       </div>
@@ -135,7 +135,7 @@ const createTask = async () => {
 };
 
 const deleteTask = async (taskId: number) => {
-  if (confirm('このタスクを削除してもよろしいですか？')) {
+  if (confirm('この依頼を削除してもよろしいですか？')) {
     await taskStore.deleteTask(taskId);
   }
 };
