@@ -55,6 +55,7 @@ jobs:
 
           # Nuxt3 アプリビルド
           cd /home/ec2-user/app/redo/frontend || exit 1
+          export NUXT_PUBLIC_API_BASE="http://15.168.89.85/api"
           pnpm build || exit 1
           pm2 restart redo_front || exit 1
 
