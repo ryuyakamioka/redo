@@ -1,24 +1,23 @@
 <template>
-  <div class="min-h-screen bg-gray-50">
-    <!-- ヘッダー -->
-    <header class="bg-white border-b border-gray-200">
-      <div class="container mx-auto px-6 py-4">
-        <div class="flex items-center justify-between">
-          <h1 class="text-2xl font-bold text-gray-800">依頼管理</h1>
-          <div class="text-sm text-gray-600">
-            全 <span class="font-semibold text-gray-900">{{ tasks.length }}</span> 件
-          </div>
+  <div class="flex flex-col h-full">
+    <!-- ページヘッダー -->
+    <PageHeader title="依頼管理">
+      <template #actions>
+        <div class="text-sm text-gray-600">
+          全 <span class="font-semibold text-gray-900">{{ tasks.length }}</span> 件
         </div>
-      </div>
-    </header>
+      </template>
+    </PageHeader>
 
     <!-- メインコンテンツ -->
-    <div class="container mx-auto px-6 py-6">
-      <!-- 依頼登録フォーム -->
-      <TaskForm :clients="clients" :items="items" @submit="createTask" />
+    <div class="flex-1 overflow-auto bg-gray-50">
+      <div class="p-6">
+        <!-- 依頼登録フォーム -->
+        <TaskForm :clients="clients" :items="items" @submit="createTask" />
 
-      <!-- 依頼テーブル -->
-      <TaskList :tasks="tasks" @delete="deleteTask" />
+        <!-- 依頼テーブル -->
+        <TaskList :tasks="tasks" @delete="deleteTask" />
+      </div>
     </div>
   </div>
 </template>
@@ -28,6 +27,7 @@ import { useTaskStore } from "~/stores/task";
 import { useClientStore } from "~/stores/client";
 import { useItemStore } from "~/stores/item";
 import { computed } from "vue";
+import PageHeader from "~/components/layout/PageHeader.vue";
 import TaskForm from "~/components/task/TaskForm.vue";
 import TaskList from "~/components/task/TaskList.vue";
 
