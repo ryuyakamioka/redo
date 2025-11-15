@@ -22,7 +22,13 @@
       <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
         {{ task.expectedDeliveryDate || '-' }}
       </td>
-      <td class="px-4 py-2 whitespace-nowrap text-sm border-r border-gray-200">
+      <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200 text-right">
+        {{ task.taskItems && task.taskItems.length > 0 ? task.taskItems.length : '-' }}
+      </td>
+      <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200 text-right">
+        {{ task.taskItems && task.taskItems.length > 0 ? '¥' + calculateTotal(task.taskItems).toLocaleString() : '-' }}
+      </td>
+      <td class="px-4 py-2 whitespace-nowrap text-sm">
         <span
           :class="{
             'inline-flex items-center px-2 py-1 rounded text-xs font-medium': true,
@@ -34,19 +40,11 @@
           {{ task.taskStatus === 'IN_PROGRESS' ? '作業中' : task.taskStatus === 'DONE' ? '完了' : 'TODO' }}
         </span>
       </td>
-      <td class="px-4 py-2 whitespace-nowrap text-sm" @click.stop>
-        <button
-          @click="$emit('delete', task.taskId)"
-          class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
-        >
-          削除
-        </button>
-      </td>
     </tr>
     <!-- メモと品目の詳細行 -->
-    <tr v-if="isExpanded && (task.note || (task.taskItems && task.taskItems.length > 0))" class="bg-gray-50">
-      <td colspan="7" class="px-4 py-3">
-        <div class="space-y-2">
+    <tr v-if="isExpanded" class="bg-gray-50">
+      <td colspan="8" class="px-4 py-3">
+        <div class="space-y-3">
           <!-- メモ -->
           <div v-if="task.note" class="text-sm">
             <span class="font-medium text-gray-700">メモ:</span>
@@ -63,6 +61,15 @@
                 合計: {{ calculateTotal(task.taskItems).toLocaleString() }}円
               </div>
             </div>
+          </div>
+          <!-- 削除ボタン -->
+          <div class="pt-2 border-t border-gray-300">
+            <button
+              @click.stop="$emit('delete', task.taskId)"
+              class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
+            >
+              この依頼を削除
+            </button>
           </div>
         </div>
       </td>

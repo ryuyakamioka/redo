@@ -45,6 +45,7 @@
           <div class="space-y-2">
             <div v-for="(item, index) in formData.items" :key="index" class="flex gap-2 items-end">
               <div class="flex-1">
+                <label v-if="index === 0" class="block text-xs text-gray-600 mb-1">品目</label>
                 <select
                   v-model="item.itemId"
                   @change="updateItemPrice(index)"
@@ -57,6 +58,7 @@
                 </select>
               </div>
               <div class="w-24">
+                <label v-if="index === 0" class="block text-xs text-gray-600 mb-1">件数</label>
                 <input
                   type="number"
                   v-model.number="item.quantity"
@@ -66,6 +68,7 @@
                 />
               </div>
               <div class="w-32">
+                <label v-if="index === 0" class="block text-xs text-gray-600 mb-1">金額</label>
                 <input
                   type="number"
                   v-model.number="item.amount"
