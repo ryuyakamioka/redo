@@ -3,9 +3,6 @@
     <!-- ページヘッダー -->
     <PageHeader title="依頼管理">
       <template #actions>
-        <div class="text-sm text-gray-600">
-          全 <span class="font-semibold text-gray-900">{{ tasks.length }}</span> 件
-        </div>
       </template>
     </PageHeader>
 
