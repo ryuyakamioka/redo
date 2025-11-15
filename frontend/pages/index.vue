@@ -326,7 +326,7 @@ const createTask = async () => {
       return {
         taskItemId: null,
         item: {
-          itemId: selectedItem!.itemId,
+          itemId: { value: selectedItem!.itemId },
           itemName: { value: selectedItem!.itemName },
           unitPrice: { value: selectedItem!.unitPrice }
         },
@@ -336,16 +336,16 @@ const createTask = async () => {
     });
 
   const task = {
-    taskId: 0,
+    taskId: { value: 0 },
     taskTitle: { value: newTask.value.title },
     taskStatus: newTask.value.status,
     requestDate: newTask.value.requestDate,
     client: selectedClient ? {
-      clientId: selectedClient.clientId,
+      clientId: { value: selectedClient.clientId },
       clientName: { value: selectedClient.clientName },
       clientAbbreviation: { value: selectedClient.clientAbbreviation },
       company: {
-        companyId: selectedClient.company.companyId,
+        companyId: { value: selectedClient.company.companyId },
         companyName: { value: selectedClient.company.companyName },
         withholdingTax: selectedClient.company.withholdingTax
       }
