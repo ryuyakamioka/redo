@@ -84,7 +84,7 @@
             <button
               type="button"
               @click="addItem"
-              class="px-4 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
+              class="px-3 py-1 text-sm bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
             >
               + 明細を追加
             </button>
@@ -206,7 +206,7 @@ const formData = ref<FormData>({
   deliveryDate: null,
   clientId: null,
   note: "",
-  items: []
+  items: [{ itemId: null, quantity: 1, amount: 0 }]
 });
 
 const addItem = () => {
@@ -249,7 +249,7 @@ const handleSubmit = () => {
     deliveryDate: null,
     clientId: null,
     note: "",
-    items: []
+    items: [{ itemId: null, quantity: 1, amount: 0 }]
   };
 };
 </script>
