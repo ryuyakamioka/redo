@@ -14,7 +14,7 @@
               type="text"
               v-model="formData.itemName"
               placeholder="品目名を入力"
-              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -28,7 +28,7 @@
               placeholder="単価を入力"
               min="0"
               step="1"
-              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>

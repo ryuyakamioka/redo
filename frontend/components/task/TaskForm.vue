@@ -13,7 +13,7 @@
               type="text"
               v-model="formData.title"
               placeholder="依頼のタイトルを入力"
-              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
           </div>
@@ -21,7 +21,7 @@
             <label class="block text-sm font-medium text-gray-700 mb-1">依頼人</label>
             <select
               v-model="formData.clientId"
-              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+              class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
             >
               <option :value="null">選択してください</option>
               <option v-for="client in clients" :key="client.clientId" :value="client.clientId">
@@ -34,7 +34,7 @@
             <input
               type="date"
               v-model="formData.expectedDeliveryDate"
-              class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+              class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
           </div>
         </div>
@@ -48,7 +48,7 @@
                 <select
                   v-model="item.itemId"
                   @change="updateItemPrice(index)"
-                  class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 >
                   <option :value="null">品目を選択</option>
                   <option v-for="i in items" :key="i.itemId" :value="i.itemId">
@@ -63,7 +63,7 @@
                   v-model.number="item.quantity"
                   @input="updateAmount(index)"
                   placeholder="件数"
-                  class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div class="w-32">
@@ -72,7 +72,7 @@
                   type="number"
                   v-model.number="item.amount"
                   placeholder="金額"
-                  class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <button
@@ -120,14 +120,14 @@
                 <input
                   type="date"
                   v-model="formData.requestDate"
-                  class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
                 <select
                   v-model="formData.status"
-                  class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                  class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
                 >
                   <option value="TODO">TODO</option>
                   <option value="IN_PROGRESS">作業中</option>
@@ -139,7 +139,7 @@
                 <input
                   type="date"
                   v-model="formData.deliveryDate"
-                  class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                  class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
             </div>
