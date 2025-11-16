@@ -6,8 +6,8 @@
     <div class="p-6">
       <form @submit.prevent="handleSubmit" class="space-y-4">
         <!-- 第1行: 依頼名、依頼人、納品予定日 -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div>
+        <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
+          <div class="md:col-span-3">
             <label class="block text-sm font-medium text-gray-700 mb-1">タイトル <span class="text-red-500">*</span></label>
             <input
               type="text"
@@ -17,7 +17,7 @@
               required
             />
           </div>
-          <div>
+          <div class="md:col-span-6">
             <label class="block text-sm font-medium text-gray-700 mb-1">依頼人</label>
             <select
               v-model="formData.clientId"
@@ -29,7 +29,7 @@
               </option>
             </select>
           </div>
-          <div>
+          <div class="md:col-span-3">
             <label class="block text-sm font-medium text-gray-700 mb-1">納品予定日</label>
             <input
               type="date"
@@ -114,21 +114,8 @@
           </button>
 
           <div v-show="showAdvanced" class="mt-4 space-y-4 pl-6 border-l-2 border-gray-200">
-            <!-- ステータス -->
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
-              <select
-                v-model="formData.status"
-                class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
-              >
-                <option value="TODO">TODO</option>
-                <option value="IN_PROGRESS">作業中</option>
-                <option value="DONE">完了</option>
-              </select>
-            </div>
-
-            <!-- 依頼日と納品日 -->
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <!-- 依頼日、ステータス、納品日 -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">依頼日</label>
                 <input
@@ -136,6 +123,17 @@
                   v-model="formData.requestDate"
                   class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
+              </div>
+              <div>
+                <label class="block text-sm font-medium text-gray-700 mb-1">ステータス</label>
+                <select
+                  v-model="formData.status"
+                  class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
+                >
+                  <option value="TODO">TODO</option>
+                  <option value="IN_PROGRESS">作業中</option>
+                  <option value="DONE">完了</option>
+                </select>
               </div>
               <div>
                 <label class="block text-sm font-medium text-gray-700 mb-1">納品日</label>
