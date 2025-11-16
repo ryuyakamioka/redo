@@ -8,11 +8,11 @@
         <!-- 第1行: 依頼名、依頼人、納品予定日 -->
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
-            <label class="block text-sm font-medium text-gray-700 mb-1">依頼名 <span class="text-red-500">*</span></label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">タイトル <span class="text-red-500">*</span></label>
             <input
               type="text"
               v-model="formData.title"
-              placeholder="依頼名を入力"
+              placeholder="依頼のタイトルを入力"
               class="w-full px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
               required
             />
@@ -79,9 +79,9 @@
               <button
                 type="button"
                 @click="removeItem(index)"
-                class="px-3 py-2 bg-red-600 text-white rounded hover:bg-red-700 transition-colors"
+                class="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors"
               >
-                削除
+                ×
               </button>
             </div>
             <button
@@ -166,7 +166,7 @@
             type="submit"
             class="px-6 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
           >
-            登録
+            依頼を登録
           </button>
         </div>
       </form>
