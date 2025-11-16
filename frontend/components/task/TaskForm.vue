@@ -1,10 +1,24 @@
 <template>
-  <div class="mb-6 bg-white rounded-lg shadow border border-gray-200">
-    <div class="px-4 py-2 border-b border-gray-200 bg-gray-50">
-      <h2 class="font-semibold text-gray-700">新規依頼登録</h2>
+  <div class="mb-4 bg-white rounded-lg shadow border border-gray-200">
+    <div
+      class="px-4 py-2 border-b border-gray-200 bg-gray-50 cursor-pointer hover:bg-gray-100 transition-colors"
+      @click="isFormExpanded = !isFormExpanded"
+    >
+      <div class="flex items-center justify-between">
+        <h2 class="font-semibold text-gray-700">新規依頼登録</h2>
+        <svg
+          class="w-5 h-5 transition-transform text-gray-600"
+          :class="{ 'rotate-180': isFormExpanded }"
+          fill="none"
+          stroke="currentColor"
+          viewBox="0 0 24 24"
+        >
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+        </svg>
+      </div>
     </div>
-    <div class="p-6">
-      <form @submit.prevent="handleSubmit" class="space-y-4">
+    <div v-show="isFormExpanded" class="p-4">
+      <form @submit.prevent="handleSubmit" class="space-y-3">
         <!-- 第1行: 依頼名、依頼人、納品予定日 -->
         <div class="grid grid-cols-1 md:grid-cols-12 gap-4">
           <div class="md:col-span-3">
@@ -196,6 +210,7 @@ const emit = defineEmits<{
   (e: "submit", data: FormData): void;
 }>();
 
+const isFormExpanded = ref(true);
 const showAdvanced = ref(false);
 
 // セッションストレージから前回の依頼人を取得
