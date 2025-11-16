@@ -155,7 +155,7 @@
                 <button
                   type="button"
                   @click="removeItem(index)"
-                  class="px-3 py-2 bg-gray-600 text-white rounded hover:bg-gray-700 transition-colors text-xs"
+                  class="px-3 py-2 text-gray-400 hover:text-gray-600 hover:bg-gray-100 rounded transition-colors text-xs"
                 >
                   ×
                 </button>
