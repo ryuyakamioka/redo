@@ -201,15 +201,43 @@ const emit = defineEmits<{
 
 const showAdvanced = ref(false);
 
+// セッションストレージから前回の依頼人を取得
+const getLastClientId = (): number | null => {
+  if (typeof window !== 'undefined') {
+    const stored = sessionStorage.getItem('lastClientId');
+    return stored ? Number(stored) : null;
+  }
+  return null;
+};
+
+// セッションストレージから前回の品目を取得
+const getLastItemId = (): number | null => {
+  if (typeof window !== 'undefined') {
+    const stored = sessionStorage.getItem('lastItemId');
+    return stored ? Number(stored) : null;
+  }
+  return null;
+};
+
+// 前回の品目に基づいて初期金額を計算
+const getInitialAmount = (): number => {
+  const lastItemId = getLastItemId();
+  if (lastItemId && props.items.length > 0) {
+    const item = props.items.find(i => i.itemId === lastItemId);
+    return item ? item.unitPrice : 0;
+  }
+  return 0;
+};
+
 const formData = ref<FormData>({
   title: "",
   status: "TODO",
   requestDate: new Date().toISOString().split('T')[0],
   expectedDeliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   deliveryDate: null,
-  clientId: null,
+  clientId: getLastClientId(),
   note: "",
-  items: [{ itemId: null, quantity: 1, amount: 0 }]
+  items: [{ itemId: getLastItemId(), quantity: 1, amount: getInitialAmount() }]
 });
 
 const addItem = () => {
@@ -241,18 +269,40 @@ const updateAmount = (index: number) => {
 };
 
 const handleSubmit = () => {
+  // 依頼人をセッションストレージに保存
+  if (formData.value.clientId !== null && typeof window !== 'undefined') {
+    sessionStorage.setItem('lastClientId', String(formData.value.clientId));
+  }
+
+  // 1行目の品目をセッションストレージに保存
+  if (formData.value.items.length > 0 && formData.value.items[0].itemId !== null && typeof window !== 'undefined') {
+    sessionStorage.setItem('lastItemId', String(formData.value.items[0].itemId));
+  }
+
   emit("submit", { ...formData.value });
 
-  // フォームをリセット
+  // フォームをリセット（依頼人と品目1行目は保持）
+  const lastClientId = formData.value.clientId;
+  const lastItemId = formData.value.items.length > 0 ? formData.value.items[0].itemId : null;
+
+  // 品目の単価を取得して件数1で金額を計算
+  let lastAmount = 0;
+  if (lastItemId !== null) {
+    const selectedItem = props.items.find(i => i.itemId === lastItemId);
+    if (selectedItem) {
+      lastAmount = selectedItem.unitPrice * 1; // 件数1で計算
+    }
+  }
+
   formData.value = {
     title: "",
     status: "TODO",
     requestDate: new Date().toISOString().split('T')[0],
     expectedDeliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     deliveryDate: null,
-    clientId: null,
+    clientId: lastClientId,
     note: "",
-    items: [{ itemId: null, quantity: 1, amount: 0 }]
+    items: [{ itemId: lastItemId, quantity: 1, amount: lastAmount }]
   };
 };
 </script>
