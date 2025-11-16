@@ -1,6 +1,6 @@
 <template>
   <div class="mb-6 bg-white rounded-lg shadow border border-gray-200">
-    <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+    <div class="px-4 py-2 border-b border-gray-200 bg-gray-50">
       <h2 class="font-semibold text-gray-700">{{ isEditMode ? '会社編集' : '新規会社登録' }}</h2>
     </div>
     <div class="p-6">

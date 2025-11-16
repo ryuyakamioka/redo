@@ -1,6 +1,6 @@
 <template>
   <div class="mb-6 bg-white rounded-lg shadow border border-gray-200">
-    <div class="px-4 py-3 border-b border-gray-200 bg-gray-50">
+    <div class="px-4 py-2 border-b border-gray-200 bg-gray-50">
       <h2 class="font-semibold text-gray-700">新規依頼登録</h2>
     </div>
     <div class="p-6">
@@ -41,7 +41,6 @@
 
         <!-- 依頼明細 -->
         <div>
-          <label class="block text-sm font-medium text-gray-700 mb-2">依頼明細</label>
           <div class="space-y-2">
             <div v-for="(item, index) in formData.items" :key="index" class="flex gap-2 items-end">
               <div class="flex-1">
