@@ -1,13 +1,22 @@
 <template>
   <div class="flex flex-col h-full">
-    <PageHeader title="品目管理" />
+    <!-- ページヘッダー -->
+    <PageHeader title="品目管理">
+      <template #actions>
+      </template>
+    </PageHeader>
+
+    <!-- メインコンテンツ -->
     <div class="flex-1 overflow-auto bg-gray-50">
-      <div class="p-6 space-y-6">
+      <div class="p-6">
+        <!-- 品目登録フォーム -->
         <ItemForm
           :editItem="editingItem"
           @submit="handleSubmit"
           @cancel="handleCancelEdit"
         />
+
+        <!-- 品目一覧 -->
         <ItemList
           :items="items"
           @edit="handleEdit"
@@ -20,6 +29,10 @@
 
 <script setup lang="ts">
 import { useItemStore } from "~/stores/item";
+import { computed, ref } from "vue";
+import PageHeader from "~/components/layout/PageHeader.vue";
+import ItemForm from "~/components/item/ItemForm.vue";
+import ItemList from "~/components/item/ItemList.vue";
 import type { Item } from "~/types/item";
 
 const itemStore = useItemStore();
