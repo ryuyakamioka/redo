@@ -78,7 +78,7 @@ cd backend
 # src/main/resources/application.properties
 
 # アプリケーションの起動（Flywayマイグレーションが自動実行されます）
-./mvnw spring-boot:run
+mvn spring-boot:run
 ```
 
 バックエンドは `http://localhost:8080/api` で起動します。
@@ -107,7 +107,7 @@ Swaggerを参照してください。
 
 ```bash
 cd backend
-./mvnw test
+mvn test
 ```
 
 ### テストの種類
