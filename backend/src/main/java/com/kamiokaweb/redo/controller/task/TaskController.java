@@ -46,4 +46,9 @@ public class TaskController {
     public void completeTask(@PathVariable Long taskId) {
         taskUseCase.complete(new TaskId(taskId));
     }
+
+    @PutMapping("/task/{taskId}/revert")
+    public void revertTask(@PathVariable Long taskId) {
+        taskUseCase.revert(new TaskId(taskId));
+    }
 }

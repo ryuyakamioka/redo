@@ -13,7 +13,7 @@
         <TaskForm :clients="clients" :items="items" @submit="createTask" />
 
         <!-- 依頼テーブル -->
-        <TaskList :tasks="tasks" :clients="clients" :items="items" @update="updateTask" @delete="deleteTask" @complete="completeTask" />
+        <TaskList :tasks="tasks" :clients="clients" :items="items" @update="updateTask" @delete="deleteTask" @complete="completeTask" @revert="revertTask" />
       </div>
     </div>
   </div>
@@ -109,6 +109,17 @@ const completeTask = async (taskId: number) => {
   } catch (error) {
     console.error("依頼の完了エラー:", error);
     alert("依頼の完了に失敗しました");
+  }
+};
+
+const revertTask = async (taskId: number) => {
+  if (confirm('この依頼を作業中に戻してもよろしいですか？')) {
+    try {
+      await taskStore.revertTask(taskId);
+    } catch (error) {
+      console.error("依頼の復帰エラー:", error);
+      alert("依頼の復帰に失敗しました");
+    }
   }
 };
 </script>

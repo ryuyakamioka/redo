@@ -124,4 +124,23 @@ public class TaskRepositoryImpl implements TaskRepository {
             taskAccessor.save(completedTask);
         });
     }
+
+    @Override
+    @Transactional
+    public void revert(TaskId taskId) {
+        taskAccessor.findById(taskId.value()).ifPresent(taskDto -> {
+            var revertedTask = new TaskDto(
+                    taskDto.id(),
+                    taskDto.title(),
+                    "IN_PROGRESS",
+                    taskDto.requestDate(),
+                    taskDto.clientId(),
+                    taskDto.note(),
+                    taskDto.expectedDeliveryDate(),
+                    null,
+                    taskDto.createdAt()
+            );
+            taskAccessor.save(revertedTask);
+        });
+    }
 }

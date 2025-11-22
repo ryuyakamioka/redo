@@ -83,6 +83,13 @@
             >
               この依頼を完了する
             </button>
+            <button
+              v-if="task.taskStatus === 'DONE'"
+              @click="$emit('revert', task.taskId)"
+              class="px-3 py-1 bg-yellow-600 text-white text-xs rounded hover:bg-yellow-700 transition-colors"
+            >
+              作業中に戻す
+            </button>
             <div v-if="task.taskStatus === 'DONE'" class="text-sm text-gray-600 py-1">
               完了済みの依頼は編集・削除できません
             </div>
@@ -332,6 +339,7 @@ const emit = defineEmits<{
   (e: "update", taskId: number, data: any): void;
   (e: "delete", taskId: number): void;
   (e: "complete", taskId: number): void;
+  (e: "revert", taskId: number): void;
 }>();
 
 const isEditMode = ref(false);

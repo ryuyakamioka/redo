@@ -39,4 +39,8 @@ public class TaskUseCase {
     public void complete(TaskId taskId) {
         taskRepository.complete(taskId);
     }
+
+    public void revert(TaskId taskId) {
+        taskRepository.revert(taskId);
+    }
 }

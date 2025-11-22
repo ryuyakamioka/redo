@@ -73,5 +73,16 @@ export const useTaskStore = defineStore("task", {
         throw error;
       }
     },
+    async revertTask(taskId: number) {
+      try {
+        const response = await useApi().put(`/task/${taskId}/revert`);
+        if (response.status === 200) {
+          await this.fetchTasks();
+        }
+      } catch (error) {
+        console.error("依頼の復帰エラー:", error);
+        throw error;
+      }
+    },
   },
 });
