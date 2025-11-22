@@ -5,9 +5,6 @@
         <thead class="bg-gray-50 border-b border-gray-200">
           <tr>
             <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
-              ID
-            </th>
-            <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
               タイトル
             </th>
             <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">

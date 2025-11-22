@@ -4,9 +4,6 @@
     class="hover:bg-gray-50 transition-colors cursor-pointer"
     :class="{ 'bg-blue-50': isExpanded }"
   >
-      <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
-        {{ task.taskId }}
-      </td>
       <td class="px-4 py-2 text-sm text-gray-900 border-r border-gray-200">
         <div class="flex items-center">
           <span class="mr-2">{{ isExpanded ? '▼' : '▶' }}</span>
@@ -23,7 +20,7 @@
         {{ task.expectedDeliveryDate || '-' }}
       </td>
       <td class="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
-        {{ task.taskItems && task.taskItems.length > 0 ? task.taskItems.map(item => item.item.itemName).join(' / ') : '-' }}
+        {{ task.taskItems && task.taskItems.length > 0 ? task.taskItems.map(item => `${item.item.itemName}: ${item.quantity}件`).join(' / ') : '-' }}
       </td>
       <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200 text-right">
         {{ task.taskItems && task.taskItems.length > 0 ? '¥' + calculateTotal(task.taskItems).toLocaleString() : '-' }}
@@ -43,7 +40,7 @@
     </tr>
     <!-- メモと品目の詳細行 / 編集フォーム -->
     <tr v-if="isExpanded" class="bg-gray-50">
-      <td colspan="8" class="px-4 py-3" @click.stop>
+      <td colspan="7" class="px-4 py-3" @click.stop>
         <!-- 表示モード -->
         <div v-if="!isEditMode" class="space-y-3">
           <!-- メモ -->
@@ -235,7 +232,7 @@
 
     <!-- 完了確認ダイアログ -->
     <tr v-if="showCompleteDialog">
-      <td colspan="8" class="p-0">
+      <td colspan="7" class="p-0">
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.stop="closeCompleteDialog">
           <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4" @click.stop>
             <h3 class="text-lg font-semibold text-gray-900 mb-4">依頼を完了しますか?</h3>
@@ -292,7 +289,7 @@
 
     <!-- 完了成功ダイアログ -->
     <tr v-if="showSuccessDialog">
-      <td colspan="8" class="p-0">
+      <td colspan="7" class="p-0">
         <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.stop="showSuccessDialog = false">
           <div class="bg-white rounded-lg p-8 max-w-sm w-full mx-4" @click.stop>
             <div class="text-center">
