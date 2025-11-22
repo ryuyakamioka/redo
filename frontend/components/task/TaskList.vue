@@ -20,7 +20,7 @@
               納品予定日
             </th>
             <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
-              品目件数
+              品目
             </th>
             <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
               金額

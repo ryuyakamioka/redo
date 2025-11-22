@@ -22,8 +22,8 @@
       <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
         {{ task.expectedDeliveryDate || '-' }}
       </td>
-      <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200 text-right">
-        {{ task.taskItems && task.taskItems.length > 0 ? task.taskItems.length : '-' }}
+      <td class="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
+        {{ task.taskItems && task.taskItems.length > 0 ? task.taskItems.map(item => item.item.itemName).join(' / ') : '-' }}
       </td>
       <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200 text-right">
         {{ task.taskItems && task.taskItems.length > 0 ? '¥' + calculateTotal(task.taskItems).toLocaleString() : '-' }}
