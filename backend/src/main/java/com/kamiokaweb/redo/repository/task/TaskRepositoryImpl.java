@@ -105,4 +105,23 @@ public class TaskRepositoryImpl implements TaskRepository {
         taskItemAccessor.deleteByTaskId(taskId.value());
         taskAccessor.findById(taskId.value()).ifPresent(taskAccessor::delete);
     }
+
+    @Override
+    @Transactional
+    public void complete(TaskId taskId) {
+        taskAccessor.findById(taskId.value()).ifPresent(taskDto -> {
+            var completedTask = new TaskDto(
+                    taskDto.id(),
+                    taskDto.title(),
+                    "DONE",
+                    taskDto.requestDate(),
+                    taskDto.clientId(),
+                    taskDto.note(),
+                    taskDto.expectedDeliveryDate(),
+                    java.time.LocalDate.now(),
+                    taskDto.createdAt()
+            );
+            taskAccessor.save(completedTask);
+        });
+    }
 }

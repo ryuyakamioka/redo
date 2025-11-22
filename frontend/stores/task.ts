@@ -62,5 +62,16 @@ export const useTaskStore = defineStore("task", {
         console.error("依頼の削除エラー:", error);
       }
     },
+    async completeTask(taskId: number) {
+      try {
+        const response = await useApi().put(`/task/${taskId}/complete`);
+        if (response.status === 200) {
+          await this.fetchTasks();
+        }
+      } catch (error) {
+        console.error("依頼の完了エラー:", error);
+        throw error;
+      }
+    },
   },
 });

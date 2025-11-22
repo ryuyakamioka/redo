@@ -41,4 +41,9 @@ public class TaskController {
     public void deleteTask(@PathVariable Long taskId) {
         taskUseCase.delete(new TaskId(taskId));
     }
+
+    @PutMapping("/task/{taskId}/complete")
+    public void completeTask(@PathVariable Long taskId) {
+        taskUseCase.complete(new TaskId(taskId));
+    }
 }

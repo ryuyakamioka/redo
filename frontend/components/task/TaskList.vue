@@ -41,6 +41,7 @@
             @toggle-expanded="toggleTaskDetail"
             @update="handleUpdate"
             @delete="handleDelete"
+            @complete="handleComplete"
           />
         </tbody>
       </table>
@@ -70,6 +71,7 @@ defineProps<Props>();
 const emit = defineEmits<{
   (e: "update", taskId: number, data: any): void;
   (e: "delete", taskId: number): void;
+  (e: "complete", taskId: number): void;
 }>();
 
 const expandedTasks = ref<Set<number>>(new Set());
@@ -88,5 +90,9 @@ const handleUpdate = (taskId: number, data: any) => {
 
 const handleDelete = (taskId: number) => {
   emit("delete", taskId);
+};
+
+const handleComplete = (taskId: number) => {
+  emit("complete", taskId);
 };
 </script>

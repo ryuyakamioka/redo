@@ -35,4 +35,8 @@ public class TaskUseCase {
     public void delete(TaskId taskId) {
         taskRepository.delete(taskId);
     }
+
+    public void complete(TaskId taskId) {
+        taskRepository.complete(taskId);
+    }
 }

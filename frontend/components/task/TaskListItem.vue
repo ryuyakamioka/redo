@@ -66,17 +66,29 @@
           <!-- ボタン -->
           <div class="pt-2 border-t border-gray-300 flex gap-2">
             <button
+              v-if="task.taskStatus !== 'DONE'"
               @click="startEdit"
               class="px-3 py-1 bg-blue-600 text-white text-xs rounded hover:bg-blue-700 transition-colors"
             >
               この依頼を編集
             </button>
             <button
+              v-if="task.taskStatus !== 'DONE'"
               @click="$emit('delete', task.taskId)"
               class="px-3 py-1 bg-red-600 text-white text-xs rounded hover:bg-red-700 transition-colors"
             >
               この依頼を削除
             </button>
+            <button
+              v-if="task.taskStatus !== 'DONE'"
+              @click="showCompleteDialog = true"
+              class="px-3 py-1 bg-green-600 text-white text-xs rounded hover:bg-green-700 transition-colors"
+            >
+              この依頼を完了する
+            </button>
+            <div v-if="task.taskStatus === 'DONE'" class="text-sm text-gray-600 py-1">
+              完了済みの依頼は編集・削除できません
+            </div>
           </div>
         </div>
 
@@ -220,6 +232,59 @@
         </div>
       </td>
     </tr>
+
+    <!-- 完了確認ダイアログ -->
+    <tr v-if="showCompleteDialog">
+      <td colspan="8" class="p-0">
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.stop="showCompleteDialog = false">
+          <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4" @click.stop>
+            <h3 class="text-lg font-semibold text-gray-900 mb-4">依頼を完了しますか?</h3>
+            <div class="space-y-3 mb-6">
+              <p class="text-sm text-gray-600">
+                この依頼を完了すると、以下の処理が実行されます:
+              </p>
+              <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
+                <li>ステータスが「完了」に変更されます</li>
+                <li>納品日が本日の日付で記録されます</li>
+                <li>完了後は編集・削除ができなくなります</li>
+              </ul>
+              <div class="pt-3 border-t border-gray-200">
+                <label class="flex items-start cursor-pointer">
+                  <input
+                    type="checkbox"
+                    v-model="confirmChecked"
+                    class="mt-1 mr-2"
+                  />
+                  <span class="text-sm text-gray-700">
+                    納品件数と金額が正しいことを確認しました
+                  </span>
+                </label>
+              </div>
+            </div>
+            <div class="flex justify-end gap-2">
+              <button
+                @click="showCompleteDialog = false"
+                class="px-4 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition-colors"
+              >
+                キャンセル
+              </button>
+              <button
+                @click="handleComplete"
+                :disabled="!confirmChecked"
+                :class="[
+                  'px-4 py-2 text-white text-sm rounded transition-colors',
+                  confirmChecked
+                    ? 'bg-green-600 hover:bg-green-700'
+                    : 'bg-gray-300 cursor-not-allowed'
+                ]"
+              >
+                完了する
+              </button>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
 </template>
 
 <script setup lang="ts">
@@ -239,9 +304,12 @@ const emit = defineEmits<{
   (e: "toggleExpanded", taskId: number): void;
   (e: "update", taskId: number, data: any): void;
   (e: "delete", taskId: number): void;
+  (e: "complete", taskId: number): void;
 }>();
 
 const isEditMode = ref(false);
+const showCompleteDialog = ref(false);
+const confirmChecked = ref(false);
 
 const formData = ref<any>({
   title: "",
@@ -357,5 +425,11 @@ const updateAmount = (index: number) => {
 
 const calculateTotal = (taskItems: any[]) => {
   return taskItems.reduce((sum, item) => sum + item.amount, 0);
+};
+
+const handleComplete = () => {
+  emit("complete", props.task.taskId);
+  showCompleteDialog.value = false;
+  confirmChecked.value = false;
 };
 </script>

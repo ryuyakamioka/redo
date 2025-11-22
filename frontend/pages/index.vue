@@ -13,7 +13,7 @@
         <TaskForm :clients="clients" :items="items" @submit="createTask" />
 
         <!-- 依頼テーブル -->
-        <TaskList :tasks="tasks" :clients="clients" :items="items" @update="updateTask" @delete="deleteTask" />
+        <TaskList :tasks="tasks" :clients="clients" :items="items" @update="updateTask" @delete="deleteTask" @complete="completeTask" />
       </div>
     </div>
   </div>
@@ -100,6 +100,15 @@ const updateTask = async (taskId: number, task: any) => {
 const deleteTask = async (taskId: number) => {
   if (confirm('この依頼を削除してもよろしいですか？')) {
     await taskStore.deleteTask(taskId);
+  }
+};
+
+const completeTask = async (taskId: number) => {
+  try {
+    await taskStore.completeTask(taskId);
+  } catch (error) {
+    console.error("依頼の完了エラー:", error);
+    alert("依頼の完了に失敗しました");
   }
 };
 </script>
