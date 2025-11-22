@@ -236,7 +236,7 @@
     <!-- 完了確認ダイアログ -->
     <tr v-if="showCompleteDialog">
       <td colspan="8" class="p-0">
-        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.stop="showCompleteDialog = false">
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.stop="closeCompleteDialog">
           <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4" @click.stop>
             <h3 class="text-lg font-semibold text-gray-900 mb-4">依頼を完了しますか?</h3>
             <div class="space-y-3 mb-6">
@@ -267,7 +267,7 @@
             </div>
             <div class="flex justify-end gap-2">
               <button
-                @click="showCompleteDialog = false"
+                @click="closeCompleteDialog"
                 class="px-4 py-2 bg-gray-600 text-white text-sm rounded hover:bg-gray-700 transition-colors"
               >
                 キャンセル
@@ -283,6 +283,32 @@
                 ]"
               >
                 完了する
+              </button>
+            </div>
+          </div>
+        </div>
+      </td>
+    </tr>
+
+    <!-- 完了成功ダイアログ -->
+    <tr v-if="showSuccessDialog">
+      <td colspan="8" class="p-0">
+        <div class="fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center z-50" @click.stop="showSuccessDialog = false">
+          <div class="bg-white rounded-lg p-8 max-w-sm w-full mx-4" @click.stop>
+            <div class="text-center">
+              <!-- チェックマークアイコン -->
+              <div class="mx-auto flex items-center justify-center h-20 w-20 rounded-full bg-green-100 mb-4">
+                <svg class="h-12 w-12 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"></path>
+                </svg>
+              </div>
+              <h3 class="text-2xl font-bold text-gray-900 mb-2">おつかれさまでした！</h3>
+              <p class="text-sm text-gray-600 mb-6">依頼が完了しました</p>
+              <button
+                @click="showSuccessDialog = false"
+                class="px-6 py-2 bg-green-600 text-white text-sm rounded hover:bg-green-700 transition-colors"
+              >
+                閉じる
               </button>
             </div>
           </div>
@@ -313,6 +339,7 @@ const emit = defineEmits<{
 
 const isEditMode = ref(false);
 const showCompleteDialog = ref(false);
+const showSuccessDialog = ref(false);
 const confirmChecked = ref(false);
 
 const formData = ref<any>({
@@ -431,9 +458,18 @@ const calculateTotal = (taskItems: any[]) => {
   return taskItems.reduce((sum, item) => sum + item.amount, 0);
 };
 
-const handleComplete = () => {
+const closeCompleteDialog = () => {
+  showCompleteDialog.value = false;
+  confirmChecked.value = false;
+};
+
+const handleComplete = async () => {
   emit("complete", props.task.taskId);
   showCompleteDialog.value = false;
   confirmChecked.value = false;
+
+  // 少し待ってから成功ダイアログを表示
+  await new Promise(resolve => setTimeout(resolve, 300));
+  showSuccessDialog.value = true;
 };
 </script>
