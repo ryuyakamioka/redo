@@ -240,14 +240,18 @@
           <div class="bg-white rounded-lg p-6 max-w-md w-full mx-4" @click.stop>
             <h3 class="text-lg font-semibold text-gray-900 mb-4">依頼を完了しますか?</h3>
             <div class="space-y-3 mb-6">
-              <p class="text-sm text-gray-600">
-                この依頼を完了すると、以下の処理が実行されます:
-              </p>
-              <ul class="list-disc list-inside text-sm text-gray-600 space-y-1">
-                <li>ステータスが「完了」に変更されます</li>
-                <li>納品日が本日の日付で記録されます</li>
-                <li>完了後は編集・削除ができなくなります</li>
-              </ul>
+              <!-- 品目一覧 -->
+              <div v-if="task.taskItems && task.taskItems.length > 0" class="bg-gray-50 rounded p-3">
+                <div class="font-medium text-gray-700 text-sm mb-2">納品内容</div>
+                <div class="space-y-1">
+                  <div v-for="(item, idx) in task.taskItems" :key="idx" class="text-sm text-gray-600">
+                    {{ item.item.itemName }} × {{ item.quantity }}件 = {{ item.amount.toLocaleString() }}円
+                  </div>
+                  <div class="text-sm font-medium text-gray-900 pt-2 border-t border-gray-300">
+                    合計: {{ calculateTotal(task.taskItems).toLocaleString() }}円
+                  </div>
+                </div>
+              </div>
               <div class="pt-3 border-t border-gray-200">
                 <label class="flex items-start cursor-pointer">
                   <input
