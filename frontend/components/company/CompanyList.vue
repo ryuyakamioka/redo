@@ -7,14 +7,26 @@
       <table class="w-full">
         <thead class="bg-gray-50 border-b border-gray-200">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              @click="sort('companyId')"
+            >
               ID
+              <span v-if="sortKey === 'companyId'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              @click="sort('companyName')"
+            >
               会社名
+              <span v-if="sortKey === 'companyName'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              @click="sort('withholdingTax')"
+            >
               源泉徴収
+              <span v-if="sortKey === 'withholdingTax'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
@@ -23,7 +35,7 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr
-            v-for="company in companies"
+            v-for="company in sortedCompanies"
             :key="company.companyId"
             class="hover:bg-gray-50 transition-colors"
           >
@@ -72,11 +84,59 @@ interface Props {
   companies: Company[];
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: "edit", company: Company): void;
   (e: "delete", companyId: number): void;
 }>();
+
+const sortKey = ref<string>('');
+const sortOrder = ref<'asc' | 'desc'>('asc');
+
+const sortedCompanies = computed(() => {
+  if (!sortKey.value) {
+    return props.companies;
+  }
+
+  return [...props.companies].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (sortKey.value) {
+      case 'companyId':
+        aValue = a.companyId;
+        bValue = b.companyId;
+        break;
+      case 'companyName':
+        aValue = a.companyName;
+        bValue = b.companyName;
+        break;
+      case 'withholdingTax':
+        aValue = a.withholdingTax ? 1 : 0;
+        bValue = b.withholdingTax ? 1 : 0;
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) {
+      return sortOrder.value === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortOrder.value === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+});
+
+const sort = (key: string) => {
+  if (sortKey.value === key) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey.value = key;
+    sortOrder.value = 'asc';
+  }
+};
 
 const handleEdit = (company: Company) => {
   emit("edit", company);

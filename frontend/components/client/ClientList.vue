@@ -7,17 +7,33 @@
       <table class="w-full">
         <thead class="bg-gray-50 border-b border-gray-200">
           <tr>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              @click="sort('clientId')"
+            >
               ID
+              <span v-if="sortKey === 'clientId'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              @click="sort('clientName')"
+            >
               依頼人名
+              <span v-if="sortKey === 'clientName'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              @click="sort('clientAbbreviation')"
+            >
               略称
+              <span v-if="sortKey === 'clientAbbreviation'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
-            <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              @click="sort('company')"
+            >
               会社
+              <span v-if="sortKey === 'company'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
@@ -26,7 +42,7 @@
         </thead>
         <tbody class="bg-white divide-y divide-gray-200">
           <tr
-            v-for="client in clients"
+            v-for="client in sortedClients"
             :key="client.clientId"
             class="hover:bg-gray-50 transition-colors"
           >
@@ -73,11 +89,63 @@ interface Props {
   clients: Client[];
 }
 
-defineProps<Props>();
+const props = defineProps<Props>();
 const emit = defineEmits<{
   (e: "edit", client: Client): void;
   (e: "delete", clientId: number): void;
 }>();
+
+const sortKey = ref<string>('');
+const sortOrder = ref<'asc' | 'desc'>('asc');
+
+const sortedClients = computed(() => {
+  if (!sortKey.value) {
+    return props.clients;
+  }
+
+  return [...props.clients].sort((a, b) => {
+    let aValue: any;
+    let bValue: any;
+
+    switch (sortKey.value) {
+      case 'clientId':
+        aValue = a.clientId;
+        bValue = b.clientId;
+        break;
+      case 'clientName':
+        aValue = a.clientName;
+        bValue = b.clientName;
+        break;
+      case 'clientAbbreviation':
+        aValue = a.clientAbbreviation || '';
+        bValue = b.clientAbbreviation || '';
+        break;
+      case 'company':
+        aValue = a.company.companyName;
+        bValue = b.company.companyName;
+        break;
+      default:
+        return 0;
+    }
+
+    if (aValue < bValue) {
+      return sortOrder.value === 'asc' ? -1 : 1;
+    }
+    if (aValue > bValue) {
+      return sortOrder.value === 'asc' ? 1 : -1;
+    }
+    return 0;
+  });
+});
+
+const sort = (key: string) => {
+  if (sortKey.value === key) {
+    sortOrder.value = sortOrder.value === 'asc' ? 'desc' : 'asc';
+  } else {
+    sortKey.value = key;
+    sortOrder.value = 'asc';
+  }
+};
 
 const handleEdit = (client: Client) => {
   emit("edit", client);
