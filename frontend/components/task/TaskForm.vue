@@ -39,7 +39,7 @@
             >
               <option :value="null">選択してください</option>
               <option v-for="client in clients" :key="client.clientId" :value="client.clientId">
-                {{ client.clientName }} ({{ client.clientAbbreviation }}) - {{ client.company.companyName }}
+                {{ client.clientAbbreviation }} - {{ client.clientName }} - {{ client.company.companyName }}
               </option>
             </select>
           </div>
@@ -231,6 +231,15 @@ const getLastItemId = (): number | null => {
   return null;
 };
 
+// セッションストレージから前回の依頼日を取得
+const getLastRequestDate = (): string => {
+  if (typeof window !== 'undefined') {
+    const stored = sessionStorage.getItem('lastRequestDate');
+    return stored || new Date().toISOString().split('T')[0];
+  }
+  return new Date().toISOString().split('T')[0];
+};
+
 // 前回の品目に基づいて初期金額を計算
 const getInitialAmount = (): number => {
   const lastItemId = getLastItemId();
@@ -244,7 +253,7 @@ const getInitialAmount = (): number => {
 const formData = ref<FormData>({
   title: "",
   status: "TODO",
-  requestDate: new Date().toISOString().split('T')[0],
+  requestDate: getLastRequestDate(),
   expectedDeliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
   deliveryDate: null,
   clientId: getLastClientId(),
@@ -286,6 +295,11 @@ const handleSubmit = () => {
     sessionStorage.setItem('lastClientId', String(formData.value.clientId));
   }
 
+  // 依頼日をセッションストレージに保存
+  if (formData.value.requestDate && typeof window !== 'undefined') {
+    sessionStorage.setItem('lastRequestDate', formData.value.requestDate);
+  }
+
   // 1行目の品目をセッションストレージに保存
   if (formData.value.items.length > 0 && formData.value.items[0].itemId !== null && typeof window !== 'undefined') {
     sessionStorage.setItem('lastItemId', String(formData.value.items[0].itemId));
@@ -293,8 +307,9 @@ const handleSubmit = () => {
 
   emit("submit", { ...formData.value });
 
-  // フォームをリセット（依頼人と品目1行目は保持）
+  // フォームをリセット（依頼人、依頼日、品目1行目は保持）
   const lastClientId = formData.value.clientId;
+  const lastRequestDate = formData.value.requestDate;
   const lastItemId = formData.value.items.length > 0 ? formData.value.items[0].itemId : null;
 
   // 品目の単価を取得して件数1で金額を計算
@@ -309,7 +324,7 @@ const handleSubmit = () => {
   formData.value = {
     title: "",
     status: "TODO",
-    requestDate: new Date().toISOString().split('T')[0],
+    requestDate: lastRequestDate,
     expectedDeliveryDate: new Date(Date.now() + 3 * 24 * 60 * 60 * 1000).toISOString().split('T')[0],
     deliveryDate: null,
     clientId: lastClientId,
