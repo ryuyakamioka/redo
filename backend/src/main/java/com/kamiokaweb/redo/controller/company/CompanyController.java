@@ -9,7 +9,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@CrossOrigin(origins = {"http://15.168.89.85"})
 public class CompanyController {
     private final CompanyUseCase companyUseCase;
 
