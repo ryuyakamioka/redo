@@ -14,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.StreamSupport;
 
 @Repository
 public class TaskRepositoryImpl implements TaskRepository {
@@ -41,7 +40,31 @@ public class TaskRepositoryImpl implements TaskRepository {
     @Override
     @Transactional
     public void register(Task task) {
-        var savedTask = taskAccessor.save(new TaskDto(task));
+        TaskDto taskDto;
+
+        // 更新の場合は既存のcreated_atを保持
+        if (task.taskId() != null && task.taskId().value() != null && task.taskId().value() != 0) {
+            var existingTask = taskAccessor.findById(task.taskId().value());
+            if (existingTask.isPresent()) {
+                taskDto = new TaskDto(
+                    task.taskId().value(),
+                    task.taskTitle().value(),
+                    task.taskStatus().name(),
+                    task.requestDate(),
+                    task.client() != null ? task.client().clientId().value() : null,
+                    task.note(),
+                    task.expectedDeliveryDate(),
+                    task.deliveryDate(),
+                    existingTask.get().createdAt()  // 既存のcreated_atを保持
+                );
+            } else {
+                taskDto = new TaskDto(task);
+            }
+        } else {
+            taskDto = new TaskDto(task);
+        }
+
+        var savedTask = taskAccessor.save(taskDto);
 
         // 既存の依頼明細を削除（更新の場合）
         if (task.taskId() != null && task.taskId().value() != null) {
@@ -79,7 +102,7 @@ public class TaskRepositoryImpl implements TaskRepository {
 
     @Override
     public List<Task> getList() {
-        return StreamSupport.stream(taskAccessor.findAll().spliterator(), false)
+        return taskAccessor.findAllByOrderByCreatedAtAsc().stream()
                 .map(taskDto -> {
                     var client = taskDto.clientId() != null
                             ? clientAccessor.findById(taskDto.clientId())
