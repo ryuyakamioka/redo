@@ -116,8 +116,8 @@ const sortedTasks = computed(() => {
         bValue = b.taskTitle.value;
         break;
       case 'client':
-        aValue = a.client?.clientName || '';
-        bValue = b.client?.clientName || '';
+        aValue = a.client?.clientAbbreviation || '';
+        bValue = b.client?.clientAbbreviation || '';
         break;
       case 'requestDate':
         aValue = a.requestDate;

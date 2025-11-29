@@ -11,7 +11,7 @@
         </div>
       </td>
       <td class="px-4 py-2 text-sm text-gray-700 border-r border-gray-200">
-        {{ task.client ? task.client.clientName : '-' }}
+        {{ task.client ? task.client.clientAbbreviation : '-' }}
       </td>
       <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200">
         {{ task.requestDate || '-' }}
