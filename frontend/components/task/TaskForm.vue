@@ -38,7 +38,7 @@
               class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500 bg-white"
             >
               <option :value="null">選択してください</option>
-              <option v-for="client in clients" :key="client.clientId" :value="client.clientId">
+              <option v-for="client in sortedClients" :key="client.clientId" :value="client.clientId">
                 {{ client.clientAbbreviation }} - {{ client.clientName }} - {{ client.company.companyName }}
               </option>
             </select>
@@ -212,6 +212,15 @@ const emit = defineEmits<{
 
 const isFormExpanded = ref(true);
 const showAdvanced = ref(false);
+
+// 依頼人を略称の昇順でソート
+const sortedClients = computed(() => {
+  return [...props.clients].sort((a, b) => {
+    const aAbbr = a.clientAbbreviation || '';
+    const bAbbr = b.clientAbbreviation || '';
+    return aAbbr.localeCompare(bAbbr, 'ja');
+  });
+});
 
 // セッションストレージから前回の依頼人を取得
 const getLastClientId = (): number | null => {
