@@ -44,7 +44,7 @@
             </select>
           </div>
           <div class="md:col-span-3">
-            <label class="block text-sm font-medium text-gray-700 mb-1">納品予定日</label>
+            <label class="block text-sm font-medium text-gray-700 mb-1">着手予定日</label>
             <input
               type="date"
               v-model="formData.expectedDeliveryDate"

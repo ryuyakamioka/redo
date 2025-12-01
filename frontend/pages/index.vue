@@ -63,7 +63,7 @@ const items = computed(() => itemStore.items);
 const tasks = computed(() => taskStore.tasks);
 
 // ステータスフィルター
-const statusFilter = ref<'ALL' | 'INCOMPLETE'>('ALL');
+const statusFilter = ref<'ALL' | 'INCOMPLETE'>('INCOMPLETE');
 
 // フィルター済みの依頼リスト
 const filteredTasks = computed(() => {

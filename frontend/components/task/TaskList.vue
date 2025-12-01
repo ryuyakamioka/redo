@@ -29,7 +29,7 @@
               class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200 cursor-pointer hover:bg-gray-100"
               @click="sort('expectedDeliveryDate')"
             >
-              納品予定日
+              着手予定日
               <span v-if="sortKey === 'expectedDeliveryDate'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
             <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
