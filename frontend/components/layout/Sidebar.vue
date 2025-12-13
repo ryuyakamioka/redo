@@ -56,6 +56,39 @@
           </div>
         </div>
 
+        <!-- 請求書管理セクション -->
+        <div class="mb-4">
+          <div
+            @click="isInvoiceSectionExpanded = !isInvoiceSectionExpanded"
+            class="px-3 py-1 cursor-pointer hover:bg-gray-50 rounded transition-colors flex items-center justify-between"
+          >
+            <p class="text-xs font-semibold text-gray-400 uppercase tracking-wider">
+              請求書管理
+            </p>
+            <svg
+              class="w-3 h-3 transition-transform text-gray-400"
+              :class="{ 'rotate-180': isInvoiceSectionExpanded }"
+              fill="none"
+              stroke="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7" />
+            </svg>
+          </div>
+          <div v-show="isInvoiceSectionExpanded" class="mt-2">
+            <NuxtLink
+              to="/invoices"
+              class="flex items-center px-3 py-2 text-sm font-medium rounded-lg transition-colors"
+              :class="isActive('/invoices') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'"
+            >
+              <svg class="w-5 h-5 mr-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+              </svg>
+              請求書一覧
+            </NuxtLink>
+          </div>
+        </div>
+
         <!-- マスタ管理セクション -->
         <div class="mb-4">
           <div
@@ -124,6 +157,17 @@
         </NuxtLink>
         <div class="my-2 border-t border-gray-200"></div>
         <NuxtLink
+          to="/invoices"
+          class="flex items-center justify-center p-2 rounded-lg transition-colors"
+          :class="isActive('/invoices') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'"
+          :title="'請求書一覧'"
+        >
+          <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+          </svg>
+        </NuxtLink>
+        <div class="my-2 border-t border-gray-200"></div>
+        <NuxtLink
           to="/companies"
           class="flex items-center justify-center p-2 rounded-lg transition-colors"
           :class="isActive('/companies') ? 'bg-blue-50 text-blue-700' : 'text-gray-700 hover:bg-gray-50'"
@@ -170,6 +214,7 @@ const route = useRoute();
 
 const isSidebarExpanded = ref(true);
 const isTaskSectionExpanded = ref(true);
+const isInvoiceSectionExpanded = ref(true);
 const isMasterSectionExpanded = ref(true);
 
 const isActive = (path: string) => {
