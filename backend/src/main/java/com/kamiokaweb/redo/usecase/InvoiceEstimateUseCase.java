@@ -68,12 +68,18 @@ public class InvoiceEstimateUseCase {
                 // 明細を作成
                 var items = tasks.stream()
                     .flatMap(task -> task.taskItems().stream()
-                        .map(taskItem -> new InvoiceEstimateItem(
-                            taskItem.item().itemName().value(),
-                            taskItem.quantity().value().longValue(),
-                            taskItem.item().unitPrice().value(),
-                            taskItem.amount().value()
-                        ))
+                        .map(taskItem -> {
+                            // 摘要: 品目名(依頼人名)
+                            String clientName = task.client() != null ? task.client().clientName().value() : "";
+                            String description = taskItem.item().itemName().value() + "（" + clientName + "）";
+
+                            return new InvoiceEstimateItem(
+                                description,
+                                taskItem.quantity().value().longValue(),
+                                taskItem.item().unitPrice().value(),
+                                taskItem.amount().value()
+                            );
+                        })
                     )
                     .toList();
 
