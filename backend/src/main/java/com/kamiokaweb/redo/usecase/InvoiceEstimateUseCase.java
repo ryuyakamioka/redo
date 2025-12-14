@@ -4,6 +4,7 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -65,15 +66,21 @@ public class InvoiceEstimateUseCase {
                 Long targetCompanyId = entry.getKey();
                 var tasks = entry.getValue();
 
-                // 明細を作成（まず全てのアイテムを収集）
+                // 明細を作成（IDを保持した中間データ構造を使用）
+                record ItemWithIds(Long clientId, Long itemId, String description, Long quantity, BigDecimal unitPrice, BigDecimal totalPrice) {}
+
                 var allItems = tasks.stream()
                     .flatMap(task -> task.taskItems().stream()
                         .map(taskItem -> {
                             // 摘要: 品目名(依頼人名)
+                            Long clientId = task.client() != null ? task.client().clientId().value() : 0L;
                             String clientName = task.client() != null ? task.client().clientName().value() : "";
                             String description = taskItem.item().itemName().value() + "（" + clientName + "）";
+                            Long itemId = taskItem.item().itemId().value();
 
-                            return new InvoiceEstimateItem(
+                            return new ItemWithIds(
+                                clientId,
+                                itemId,
                                 description,
                                 taskItem.quantity().value().longValue(),
                                 taskItem.item().unitPrice().value(),
@@ -83,14 +90,16 @@ public class InvoiceEstimateUseCase {
                     )
                     .toList();
 
-                // 摘要と単価が同じ明細をまとめる
-                var items = allItems.stream()
+                // 依頼人ID、品目ID、単価が同じ明細をまとめる
+                var groupedItems = allItems.stream()
                     .collect(Collectors.groupingBy(
-                        item -> item.description() + ":" + item.unitPrice(),
+                        item -> item.clientId() + ":" + item.itemId() + ":" + item.unitPrice(),
                         Collectors.reducing((item1, item2) -> {
                             long totalQuantity = item1.quantity() + item2.quantity();
                             BigDecimal totalPrice = item1.unitPrice().multiply(BigDecimal.valueOf(totalQuantity));
-                            return new InvoiceEstimateItem(
+                            return new ItemWithIds(
+                                item1.clientId(),
+                                item1.itemId(),
                                 item1.description(),
                                 totalQuantity,
                                 item1.unitPrice(),
@@ -101,6 +110,18 @@ public class InvoiceEstimateUseCase {
                     .values().stream()
                     .filter(optional -> optional.isPresent())
                     .map(optional -> optional.get())
+                    .toList();
+
+                // 依頼人IDの昇順、品目IDの昇順でソート
+                var items = groupedItems.stream()
+                    .sorted(Comparator.comparing(ItemWithIds::clientId)
+                        .thenComparing(ItemWithIds::itemId))
+                    .map(item -> new InvoiceEstimateItem(
+                        item.description(),
+                        item.quantity(),
+                        item.unitPrice(),
+                        item.totalPrice()
+                    ))
                     .toList();
 
                 // 小計を計算
