@@ -3,6 +3,18 @@
     <!-- ページヘッダー -->
     <PageHeader title="請求書管理">
       <template #actions>
+        <button
+          @click="handleFreeeAuth"
+          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+        >
+          freee認証
+        </button>
+        <button
+          @click="handleFreeeSendInvoice"
+          class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+        >
+          freee請求書送信
+        </button>
       </template>
     </PageHeader>
 
@@ -140,6 +152,16 @@ const fetchEstimates = async () => {
 const getCompanyName = (companyId: number): string => {
   const company = companies.value.find(c => c.companyId === companyId);
   return company ? company.companyName : `会社ID: ${companyId}`;
+};
+
+// freee認証ハンドラー
+const handleFreeeAuth = () => {
+  alert('freee認証機能は今後実装予定です');
+};
+
+// freee請求書送信ハンドラー
+const handleFreeeSendInvoice = () => {
+  alert('freee請求書送信機能は今後実装予定です');
 };
 
 // 初回ロード時に自動で検索
