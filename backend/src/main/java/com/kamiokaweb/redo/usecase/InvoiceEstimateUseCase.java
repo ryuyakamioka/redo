@@ -65,8 +65,8 @@ public class InvoiceEstimateUseCase {
                 Long targetCompanyId = entry.getKey();
                 var tasks = entry.getValue();
 
-                // 明細を作成
-                var items = tasks.stream()
+                // 明細を作成（まず全てのアイテムを収集）
+                var allItems = tasks.stream()
                     .flatMap(task -> task.taskItems().stream()
                         .map(taskItem -> {
                             // 摘要: 品目名(依頼人名)
@@ -81,6 +81,26 @@ public class InvoiceEstimateUseCase {
                             );
                         })
                     )
+                    .toList();
+
+                // 摘要と単価が同じ明細をまとめる
+                var items = allItems.stream()
+                    .collect(Collectors.groupingBy(
+                        item -> item.description() + ":" + item.unitPrice(),
+                        Collectors.reducing((item1, item2) -> {
+                            long totalQuantity = item1.quantity() + item2.quantity();
+                            BigDecimal totalPrice = item1.unitPrice().multiply(BigDecimal.valueOf(totalQuantity));
+                            return new InvoiceEstimateItem(
+                                item1.description(),
+                                totalQuantity,
+                                item1.unitPrice(),
+                                totalPrice
+                            );
+                        })
+                    ))
+                    .values().stream()
+                    .filter(optional -> optional.isPresent())
+                    .map(optional -> optional.get())
                     .toList();
 
                 // 小計を計算
