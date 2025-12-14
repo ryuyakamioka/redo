@@ -4,7 +4,6 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.Month;
 import java.time.Year;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -15,6 +14,7 @@ import com.kamiokaweb.redo.model.company.CompanyId;
 import com.kamiokaweb.redo.model.invoice.AccountingPeriod;
 import com.kamiokaweb.redo.model.invoice.InvoiceEstimate;
 import com.kamiokaweb.redo.model.invoice.InvoiceEstimateItem;
+import com.kamiokaweb.redo.model.invoice.InvoiceEstimateItemAggregator;
 import com.kamiokaweb.redo.repository.task.TaskRepository;
 
 @Service
@@ -66,63 +66,8 @@ public class InvoiceEstimateUseCase {
                 Long targetCompanyId = entry.getKey();
                 var tasks = entry.getValue();
 
-                // 明細を作成（IDを保持した中間データ構造を使用）
-                record ItemWithIds(Long clientId, Long itemId, String description, Long quantity, BigDecimal unitPrice, BigDecimal totalPrice) {}
-
-                var allItems = tasks.stream()
-                    .flatMap(task -> task.taskItems().stream()
-                        .map(taskItem -> {
-                            // 摘要: 品目名(依頼人名)
-                            Long clientId = task.client() != null ? task.client().clientId().value() : 0L;
-                            String clientName = task.client() != null ? task.client().clientName().value() : "";
-                            String description = taskItem.item().itemName().value() + "（" + clientName + "）";
-                            Long itemId = taskItem.item().itemId().value();
-
-                            return new ItemWithIds(
-                                clientId,
-                                itemId,
-                                description,
-                                taskItem.quantity().value().longValue(),
-                                taskItem.item().unitPrice().value(),
-                                taskItem.amount().value()
-                            );
-                        })
-                    )
-                    .toList();
-
-                // 依頼人ID、品目ID、単価が同じ明細をまとめる
-                var groupedItems = allItems.stream()
-                    .collect(Collectors.groupingBy(
-                        item -> item.clientId() + ":" + item.itemId() + ":" + item.unitPrice(),
-                        Collectors.reducing((item1, item2) -> {
-                            long totalQuantity = item1.quantity() + item2.quantity();
-                            BigDecimal totalPrice = item1.unitPrice().multiply(BigDecimal.valueOf(totalQuantity));
-                            return new ItemWithIds(
-                                item1.clientId(),
-                                item1.itemId(),
-                                item1.description(),
-                                totalQuantity,
-                                item1.unitPrice(),
-                                totalPrice
-                            );
-                        })
-                    ))
-                    .values().stream()
-                    .filter(optional -> optional.isPresent())
-                    .map(optional -> optional.get())
-                    .toList();
-
-                // 依頼人IDの昇順、品目IDの昇順でソート
-                var items = groupedItems.stream()
-                    .sorted(Comparator.comparing(ItemWithIds::clientId)
-                        .thenComparing(ItemWithIds::itemId))
-                    .map(item -> new InvoiceEstimateItem(
-                        item.description(),
-                        item.quantity(),
-                        item.unitPrice(),
-                        item.totalPrice()
-                    ))
-                    .toList();
+                // ドメインサービスで明細を集約・ソート
+                var items = InvoiceEstimateItemAggregator.aggregateAndSort(tasks);
 
                 // 小計を計算
                 BigDecimal subtotal = items.stream()
