@@ -64,6 +64,7 @@
             @delete="handleDelete"
             @complete="handleComplete"
             @revert="handleRevert"
+            @update-status="handleUpdateStatus"
           />
         </tbody>
       </table>
@@ -95,6 +96,7 @@ const emit = defineEmits<{
   (e: "delete", taskId: number): void;
   (e: "complete", taskId: number): void;
   (e: "revert", taskId: number): void;
+  (e: "updateStatus", taskId: number, status: string): void;
 }>();
 
 const expandedTasks = ref<Set<number>>(new Set());
@@ -180,5 +182,9 @@ const handleComplete = (taskId: number) => {
 
 const handleRevert = (taskId: number) => {
   emit("revert", taskId);
+};
+
+const handleUpdateStatus = (taskId: number, status: string) => {
+  emit("updateStatus", taskId, status);
 };
 </script>

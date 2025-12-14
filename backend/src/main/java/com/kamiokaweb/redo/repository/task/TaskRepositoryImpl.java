@@ -166,4 +166,23 @@ public class TaskRepositoryImpl implements TaskRepository {
             taskAccessor.save(revertedTask);
         });
     }
+
+    @Override
+    @Transactional
+    public void updateStatus(TaskId taskId, com.kamiokaweb.redo.model.task.TaskStatus status) {
+        taskAccessor.findById(taskId.value()).ifPresent(taskDto -> {
+            var updatedTask = new TaskDto(
+                    taskDto.id(),
+                    taskDto.title(),
+                    status.name(),
+                    taskDto.requestDate(),
+                    taskDto.clientId(),
+                    taskDto.note(),
+                    taskDto.expectedDeliveryDate(),
+                    status == com.kamiokaweb.redo.model.task.TaskStatus.DONE ? java.time.LocalDate.now() : null,
+                    taskDto.createdAt()
+            );
+            taskAccessor.save(updatedTask);
+        });
+    }
 }

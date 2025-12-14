@@ -3,6 +3,7 @@ package com.kamiokaweb.redo.controller.task;
 import com.kamiokaweb.redo.controller.task.io.TaskListResponse;
 import com.kamiokaweb.redo.controller.task.io.TaskRequest;
 import com.kamiokaweb.redo.controller.task.io.TaskResponse;
+import com.kamiokaweb.redo.controller.task.io.UpdateStatusRequest;
 import com.kamiokaweb.redo.model.task.TaskId;
 import com.kamiokaweb.redo.usecase.TaskUseCase;
 import org.springframework.web.bind.annotation.*;
@@ -49,5 +50,10 @@ public class TaskController {
     @PutMapping("/task/{taskId}/revert")
     public void revertTask(@PathVariable Long taskId) {
         taskUseCase.revert(new TaskId(taskId));
+    }
+
+    @PutMapping("/task/{taskId}/status")
+    public void updateTaskStatus(@PathVariable Long taskId, @RequestBody UpdateStatusRequest request) {
+        taskUseCase.updateStatus(new TaskId(taskId), request.status());
     }
 }

@@ -84,5 +84,16 @@ export const useTaskStore = defineStore("task", {
         throw error;
       }
     },
+    async updateTaskStatus(taskId: number, status: string) {
+      try {
+        const response = await useApi().put(`/task/${taskId}/status`, { status });
+        if (response.status === 200) {
+          await this.fetchTasks();
+        }
+      } catch (error) {
+        console.error("ステータスの更新エラー:", error);
+        throw error;
+      }
+    },
   },
 });

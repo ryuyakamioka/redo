@@ -33,7 +33,7 @@
         </div>
 
         <!-- 依頼テーブル -->
-        <TaskList :tasks="filteredTasks" :clients="clients" :items="items" @update="updateTask" @delete="deleteTask" @complete="completeTask" @revert="revertTask" />
+        <TaskList :tasks="filteredTasks" :clients="clients" :items="items" @update="updateTask" @delete="deleteTask" @complete="completeTask" @revert="revertTask" @update-status="updateTaskStatus" />
       </div>
     </div>
   </div>
@@ -164,6 +164,15 @@ const revertTask = async (taskId: number) => {
       console.error("依頼の復帰エラー:", error);
       alert("依頼の復帰に失敗しました");
     }
+  }
+};
+
+const updateTaskStatus = async (taskId: number, status: string) => {
+  try {
+    await taskStore.updateTaskStatus(taskId, status);
+  } catch (error) {
+    console.error("ステータスの更新エラー:", error);
+    alert("ステータスの更新に失敗しました");
   }
 };
 </script>

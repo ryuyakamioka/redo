@@ -43,4 +43,8 @@ public class TaskUseCase {
     public void revert(TaskId taskId) {
         taskRepository.revert(taskId);
     }
+
+    public void updateStatus(TaskId taskId, com.kamiokaweb.redo.model.task.TaskStatus status) {
+        taskRepository.updateStatus(taskId, status);
+    }
 }

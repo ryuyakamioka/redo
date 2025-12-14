@@ -19,4 +19,6 @@ public interface TaskRepository {
     void complete(TaskId taskId);
 
     void revert(TaskId taskId);
+
+    void updateStatus(TaskId taskId, com.kamiokaweb.redo.model.task.TaskStatus status);
 }

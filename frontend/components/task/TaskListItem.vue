@@ -25,16 +25,25 @@
       <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700 border-r border-gray-200 text-right">
         {{ task.taskItems && task.taskItems.length > 0 ? '¥' + calculateTotal(task.taskItems).toLocaleString() : '-' }}
       </td>
-      <td class="px-4 py-2 whitespace-nowrap text-sm">
-        <span
+      <td class="px-4 py-2 whitespace-nowrap text-sm" @click.stop>
+        <select
+          v-if="task.taskStatus !== 'DONE'"
+          :value="task.taskStatus"
+          @change="handleStatusChange($event)"
           :class="{
-            'inline-flex items-center px-2 py-1 rounded text-xs font-medium': true,
+            'px-2 py-1 rounded text-xs font-medium border-0 cursor-pointer': true,
             'bg-gray-100 text-gray-700': task.taskStatus === 'TODO',
-            'bg-blue-100 text-blue-700': task.taskStatus === 'IN_PROGRESS',
-            'bg-green-100 text-green-700': task.taskStatus === 'DONE'
+            'bg-blue-100 text-blue-700': task.taskStatus === 'IN_PROGRESS'
           }"
         >
-          {{ task.taskStatus === 'IN_PROGRESS' ? '作業中' : task.taskStatus === 'DONE' ? '完了' : 'TODO' }}
+          <option value="TODO">TODO</option>
+          <option value="IN_PROGRESS">作業中</option>
+        </select>
+        <span
+          v-else
+          class="inline-flex items-center px-2 py-1 rounded text-xs font-medium bg-green-100 text-green-700"
+        >
+          完了
         </span>
       </td>
     </tr>
@@ -340,6 +349,7 @@ const emit = defineEmits<{
   (e: "delete", taskId: number): void;
   (e: "complete", taskId: number): void;
   (e: "revert", taskId: number): void;
+  (e: "updateStatus", taskId: number, status: string): void;
 }>();
 
 const isEditMode = ref(false);
@@ -476,5 +486,11 @@ const handleComplete = async () => {
   // 少し待ってから成功ダイアログを表示
   await new Promise(resolve => setTimeout(resolve, 300));
   showSuccessDialog.value = true;
+};
+
+const handleStatusChange = (event: Event) => {
+  const target = event.target as HTMLSelectElement;
+  const newStatus = target.value;
+  emit("updateStatus", props.task.taskId, newStatus);
 };
 </script>
