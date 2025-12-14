@@ -3,18 +3,6 @@
     <!-- ページヘッダー -->
     <PageHeader title="請求書管理">
       <template #actions>
-        <button
-          @click="handleFreeeAuth"
-          class="px-4 py-2 bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
-        >
-          freee認証
-        </button>
-        <button
-          @click="handleFreeeSendInvoice"
-          class="px-4 py-2 bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
-        >
-          freee請求書送信
-        </button>
       </template>
     </PageHeader>
 
@@ -38,6 +26,22 @@
               表示中の請求予定: <span class="font-medium text-gray-700">{{ summary.count }}件</span> <span class="font-medium text-gray-700">¥{{ summary.total.toLocaleString() }}</span>
             </div>
           </div>
+        </div>
+
+        <!-- freee連携ボタン -->
+        <div class="mb-4 flex gap-2 justify-end">
+          <button
+            @click="handleFreeeAuth"
+            class="px-3 py-1.5 text-sm bg-green-600 text-white rounded hover:bg-green-700 transition-colors"
+          >
+            freee認証
+          </button>
+          <button
+            @click="handleFreeeSendInvoice"
+            class="px-3 py-1.5 text-sm bg-blue-600 text-white rounded hover:bg-blue-700 transition-colors"
+          >
+            freee請求書送信
+          </button>
         </div>
 
         <!-- 請求予定リスト -->
