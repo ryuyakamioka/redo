@@ -42,6 +42,9 @@ class InvoiceEstimateUseCaseTest {
     @Autowired
     private TaskRepository taskRepository;
 
+    @Autowired
+    private com.kamiokaweb.redo.infrastructure.task.TaskAccessor taskAccessor;
+
     private Company company1;
     private Company company2;
     private Client client1;
@@ -52,15 +55,21 @@ class InvoiceEstimateUseCaseTest {
 
     @BeforeEach
     void setUp() {
-        // テストデータの準備
+        // テスト前にTaskとTaskItemをクリア（マイグレーションデータは保持）
+        taskAccessor.deleteAll();
+
+        // テストデータの準備（マイグレーションで挿入済みのデータを参照）
+        // V3: 会社ID 1=株式会社サンプル, 2=テスト株式会社, 3=ABC商事
+        // V4: 顧客ID 1=顧客A(会社1), 2=顧客B(会社1), 3=顧客C(会社2), 4=顧客D(会社3)
+        // V5: 品目ID 1=データ入力(500円), 2=書類作成(1000円), 3=校正作業(800円), 4=翻訳作業(1500円)
         company1 = new Company(
                 new CompanyId(1L),
-                new CompanyName("株式会社A"),
-                false
+                new CompanyName("株式会社サンプル"),
+                true
         );
         company2 = new Company(
                 new CompanyId(2L),
-                new CompanyName("株式会社B"),
+                new CompanyName("テスト株式会社"),
                 false
         );
         client1 = new Client(
@@ -118,7 +127,7 @@ class InvoiceEstimateUseCaseTest {
     @Test
     void getEstimates_同一品目と依頼人の明細をまとめる() {
         // Arrange
-        LocalDate deliveryDate = LocalDate.of(2025, 12, 15);
+        LocalDate deliveryDate = LocalDate.of(2026, 1, 15);
 
         // 同じ依頼人、同じ品目の依頼を複数作成
         var task1 = createTask(client1, deliveryDate, TaskStatus.DONE, List.of(
@@ -131,7 +140,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task2);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202512", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202601", null);
 
         // Assert
         var estimate = estimates.stream()
@@ -186,8 +195,8 @@ class InvoiceEstimateUseCaseTest {
     @Test
     void getEstimates_締日以降の依頼は含まれない() {
         // Arrange
-        LocalDate deliveryDateBefore = LocalDate.of(2025, 12, 20); // 締日
-        LocalDate deliveryDateAfter = LocalDate.of(2025, 12, 21);  // 締日の翌日
+        LocalDate deliveryDateBefore = LocalDate.of(2026, 2, 20); // 締日
+        LocalDate deliveryDateAfter = LocalDate.of(2026, 2, 21);  // 締日の翌日
 
         var task1 = createTask(client1, deliveryDateBefore, TaskStatus.DONE, List.of(
                 createTaskItem(item1, 5)
@@ -199,7 +208,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task2);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202512", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202602", null);
 
         // Assert
         var estimate = estimates.stream()
@@ -215,7 +224,7 @@ class InvoiceEstimateUseCaseTest {
     @Test
     void getEstimates_未完了の依頼は含まれない() {
         // Arrange
-        LocalDate deliveryDate = LocalDate.of(2025, 12, 15);
+        LocalDate deliveryDate = LocalDate.of(2026, 3, 15);
 
         var task1 = createTask(client1, deliveryDate, TaskStatus.DONE, List.of(
                 createTaskItem(item1, 5)
@@ -227,7 +236,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task2);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202512", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202603", null);
 
         // Assert
         var estimate = estimates.stream()
@@ -265,7 +274,7 @@ class InvoiceEstimateUseCaseTest {
     @Test
     void getEstimates_小計が正しく計算される() {
         // Arrange
-        LocalDate deliveryDate = LocalDate.of(2025, 12, 15);
+        LocalDate deliveryDate = LocalDate.of(2026, 4, 15);
 
         var task = createTask(client1, deliveryDate, TaskStatus.DONE, List.of(
                 createTaskItem(item1, 5),  // 500 * 5 = 2500
@@ -274,7 +283,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202512", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202604", null);
 
         // Assert
         var estimate = estimates.stream()
@@ -302,7 +311,7 @@ class InvoiceEstimateUseCaseTest {
     private TaskItem createTaskItem(Item item, Integer quantity) {
         BigDecimal quantityBigDecimal = new BigDecimal(quantity);
         return new TaskItem(
-                new TaskItemId(0L),
+                new TaskItemId(null),
                 item,
                 new Quantity(quantity),
                 new Amount(item.unitPrice().value().multiply(quantityBigDecimal))
