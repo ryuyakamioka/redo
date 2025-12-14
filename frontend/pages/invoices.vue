@@ -11,15 +11,19 @@
       <div class="p-6">
         <!-- 年月選択フォーム -->
         <div class="mb-4 bg-white rounded-lg shadow border border-gray-200 p-4">
-          <div class="flex items-center gap-4">
-            <div>
-              <label class="block text-sm font-medium text-gray-700 mb-1">請求予定年月</label>
-              <input
-                type="month"
-                v-model="selectedMonth"
-                @change="fetchEstimates"
-                class="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
-              />
+          <div class="flex items-center justify-between">
+            <div class="flex items-center gap-4">
+              <div>
+                <input
+                  type="month"
+                  v-model="selectedMonth"
+                  @change="fetchEstimates"
+                  class="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+                />
+              </div>
+            </div>
+            <div class="text-sm text-gray-600">
+              表示中の請求予定: <span class="font-medium text-gray-700">{{ summary.count }}件</span> <span class="font-medium text-gray-700">¥{{ summary.total.toLocaleString() }}</span>
             </div>
           </div>
         </div>
@@ -105,6 +109,13 @@ await companyStore.fetchCompanies();
 
 const companies = computed(() => companyStore.companies);
 const estimates = computed(() => invoiceStore.estimates);
+
+// 請求予定のサマリー
+const summary = computed(() => {
+  const count = estimates.value.length;
+  const total = estimates.value.reduce((sum, estimate) => sum + estimate.subtotal, 0);
+  return { count, total };
+});
 
 // 現在の年月をデフォルト値として設定
 const now = new Date();

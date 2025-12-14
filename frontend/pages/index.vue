@@ -23,6 +23,7 @@
               >
                 <option value="ALL">完了を含む</option>
                 <option value="INCOMPLETE">完了を含まない</option>
+                <option value="DONE_ONLY">完了のみ</option>
               </select>
             </div>
             <div class="text-sm text-gray-600">
@@ -63,12 +64,15 @@ const items = computed(() => itemStore.items);
 const tasks = computed(() => taskStore.tasks);
 
 // ステータスフィルター
-const statusFilter = ref<'ALL' | 'INCOMPLETE'>('INCOMPLETE');
+const statusFilter = ref<'ALL' | 'INCOMPLETE' | 'DONE_ONLY'>('INCOMPLETE');
 
 // フィルター済みの依頼リスト
 const filteredTasks = computed(() => {
   if (statusFilter.value === 'ALL') {
     return tasks.value;
+  } else if (statusFilter.value === 'DONE_ONLY') {
+    // 完了のみ
+    return tasks.value.filter(task => task.taskStatus === 'DONE');
   }
   // 完了を含まない（未完了のみ）
   return tasks.value.filter(task => task.taskStatus !== 'DONE');
