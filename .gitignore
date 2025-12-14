@@ -1,0 +1,4 @@
+# Maven wrapper
+backend/mvnw
+backend/mvnw.cmd
+backend/.mvn/

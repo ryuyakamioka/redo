@@ -28,8 +28,8 @@
       <td class="px-4 py-2 whitespace-nowrap text-sm" @click.stop>
         <select
           v-if="task.taskStatus !== 'DONE'"
-          :value="task.taskStatus"
-          @change="handleStatusChange($event)"
+          v-model="localStatus"
+          @change="handleStatusChange"
           :class="{
             'px-2 py-1 rounded text-xs font-medium border-0 cursor-pointer': true,
             'bg-gray-100 text-gray-700': task.taskStatus === 'TODO',
@@ -357,6 +357,13 @@ const showCompleteDialog = ref(false);
 const showSuccessDialog = ref(false);
 const confirmChecked = ref(false);
 
+const localStatus = ref(props.task.taskStatus);
+
+// propsが更新されたらlocalStatusも更新
+watch(() => props.task.taskStatus, (newStatus) => {
+  localStatus.value = newStatus;
+});
+
 const formData = ref<any>({
   title: "",
   status: "TODO",
@@ -488,9 +495,7 @@ const handleComplete = async () => {
   showSuccessDialog.value = true;
 };
 
-const handleStatusChange = (event: Event) => {
-  const target = event.target as HTMLSelectElement;
-  const newStatus = target.value;
-  emit("updateStatus", props.task.taskId, newStatus);
+const handleStatusChange = () => {
+  emit("updateStatus", props.task.taskId, localStatus.value);
 };
 </script>

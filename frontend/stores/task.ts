@@ -87,7 +87,7 @@ export const useTaskStore = defineStore("task", {
     async updateTaskStatus(taskId: number, status: string) {
       try {
         const response = await useApi().put(`/task/${taskId}/status`, { status });
-        if (response.status === 200) {
+        if (response.status === 200 || response.status === 204) {
           await this.fetchTasks();
         }
       } catch (error) {
