@@ -159,8 +159,17 @@ const getCompanyName = (companyId: number): string => {
 };
 
 // freee認証ハンドラー
-const handleFreeeAuth = () => {
-  alert('freee認証機能は今後実装予定です');
+const handleFreeeAuth = async () => {
+  try {
+    const response = await useApi().get('/freee/auth-url');
+    const authUrl = response.data.authUrl;
+
+    // 認証URLを新しいウィンドウで開く
+    window.open(authUrl, '_blank', 'width=600,height=700');
+  } catch (error) {
+    console.error('freee認証URLの取得に失敗しました:', error);
+    alert('freee認証URLの取得に失敗しました');
+  }
 };
 
 // freee請求書送信ハンドラー
