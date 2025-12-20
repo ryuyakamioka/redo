@@ -54,14 +54,23 @@
             <!-- 会社ヘッダー -->
             <div class="px-4 py-3 bg-gray-50 border-b border-gray-200">
               <div class="flex items-center justify-between">
-                <h3 class="font-semibold text-gray-800">
-                  {{ getCompanyName(estimate.companyId) }}
-                </h3>
+                <div class="flex items-center gap-3">
+                  <input
+                    type="checkbox"
+                    :id="`estimate-${estimate.companyId}`"
+                    v-model="selectedCompanyIds"
+                    :value="estimate.companyId"
+                    class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                  />
+                  <label :for="`estimate-${estimate.companyId}`" class="font-semibold text-gray-800 cursor-pointer">
+                    {{ getCompanyName(estimate.companyId) }}
+                  </label>
+                </div>
                 <div class="text-lg font-bold text-blue-600">
                   小計: ¥{{ estimate.subtotal.toLocaleString() }}
                 </div>
               </div>
-              <div class="text-sm text-gray-600 mt-1">
+              <div class="text-sm text-gray-600 mt-1 ml-7">
                 計上年月: {{ estimate.year }}年{{ estimate.month }}月
               </div>
             </div>
@@ -126,6 +135,9 @@ await companyStore.fetchCompanies();
 const companies = computed(() => companyStore.companies);
 const estimates = computed(() => invoiceStore.estimates);
 
+// 送信対象の会社IDリスト
+const selectedCompanyIds = ref<number[]>([]);
+
 // 請求予定のサマリー
 const summary = computed(() => {
   const count = estimates.value.length;
@@ -174,54 +186,34 @@ const handleFreeeAuth = async () => {
 
 // freee請求書送信ハンドラー
 const handleFreeeSendInvoice = async () => {
-  if (estimates.value.length === 0) {
-    alert('送信する請求書がありません');
+  if (selectedCompanyIds.value.length === 0) {
+    alert('送信する請求書を選択してください');
     return;
   }
 
-  // TODO: freeeの事業所IDと取引先IDの設定UIが必要
-  // 仮の値として1を使用（実際は設定から取得する必要がある）
-  const freeeCompanyId = 1;
-
-  if (!confirm(`${estimates.value.length}件の請求書をfreeeに送信しますか？`)) {
+  if (!confirm(`${selectedCompanyIds.value.length}件の請求書をfreeeに送信しますか？`)) {
     return;
   }
+
+  // billingMonth形式に変換（YYYYMM）
+  const billingMonth = selectedMonth.value.replace('-', '');
 
   try {
-    let successCount = 0;
-    let errorCount = 0;
+    const requestBody = {
+      billingMonth: billingMonth,
+      companyIds: selectedCompanyIds.value
+    };
 
-    for (const estimate of estimates.value) {
-      // freeePartnerId は仮で1を使用（実際は会社ごとにマッピングが必要）
-      const freeePartnerId = 1;
+    const response = await useApi().post('/freee/invoices/send', requestBody);
 
-      // billingMonth形式に変換（YYYYMM）
-      const billingMonth = `${estimate.year}${String(estimate.month).padStart(2, '0')}`;
-
-      const requestBody = {
-        billingMonth: billingMonth,
-        freeeCompanyId: freeeCompanyId,
-        freeePartnerId: freeePartnerId,
-        localCompanyId: estimate.companyId
-      };
-
-      try {
-        await useApi().post('/freee/invoices/send', requestBody);
-        successCount++;
-      } catch (error) {
-        console.error('freee請求書送信エラー:', error);
-        errorCount++;
-      }
+    if (response.status === 200) {
+      alert(`${selectedCompanyIds.value.length}件の請求書をfreeeに送信しました`);
+      selectedCompanyIds.value = []; // 選択をクリア
     }
-
-    if (errorCount === 0) {
-      alert(`${successCount}件の請求書をfreeeに送信しました`);
-    } else {
-      alert(`成功: ${successCount}件、失敗: ${errorCount}件`);
-    }
-  } catch (error) {
+  } catch (error: any) {
     console.error('freee請求書送信エラー:', error);
-    alert('freee請求書送信に失敗しました');
+    const errorMessage = error.response?.data?.message || 'freee請求書送信に失敗しました';
+    alert(errorMessage);
   }
 };
 

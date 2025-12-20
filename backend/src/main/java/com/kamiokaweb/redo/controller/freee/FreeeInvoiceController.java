@@ -4,6 +4,7 @@ import com.kamiokaweb.redo.service.freee.FreeeInvoiceService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -22,14 +23,16 @@ public class FreeeInvoiceController {
     @PostMapping("/send")
     public ResponseEntity<Map<String, Object>> sendInvoice(@RequestBody SendInvoiceRequest request) {
         try {
-            Long invoiceId = freeeInvoiceService.createInvoice(
-                    request.billingMonth()
+            List<Long> invoiceIds = freeeInvoiceService.createInvoices(
+                    request.billingMonth(),
+                    request.companyIds()
             );
 
             return ResponseEntity.ok(Map.of(
                     "status", "success",
                     "message", "freeeに請求書を送信しました",
-                    "invoiceId", invoiceId
+                    "invoiceIds", invoiceIds,
+                    "count", invoiceIds.size()
             ));
         } catch (Exception e) {
             return ResponseEntity.badRequest().body(Map.of(
@@ -40,6 +43,7 @@ public class FreeeInvoiceController {
     }
 
     public record SendInvoiceRequest(
-            String billingMonth
+            String billingMonth,
+            List<Long> companyIds
     ) {}
 }

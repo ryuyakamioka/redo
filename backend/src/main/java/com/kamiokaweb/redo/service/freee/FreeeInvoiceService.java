@@ -33,17 +33,26 @@ public class FreeeInvoiceService {
     }
 
     /**
+     * freee APIに複数の請求書を送信
+     *
+     * @param billingMonth 請求年月（例: "202512"）
+     * @param companyIds 請求書を作成する会社IDのリスト
+     * @return 作成された請求書IDのリスト
+     */
+    public List<Long> createInvoices(String billingMonth, List<Long> companyIds) {
+        return companyIds.stream()
+                .map(companyId -> createInvoice(billingMonth, companyId))
+                .toList();
+    }
+
+    /**
      * freee APIに請求書を送信
      *
      * @param billingMonth 請求年月（例: "202512"）
-     * @param freeeCompanyId freeeの事業所ID
-     * @param freeePartnerId freee取引先ID
      * @param localCompanyId ローカルの会社ID
      * @return 作成された請求書のID
      */
-    public Long createInvoice(
-            String billingMonth
-    ) {
+    private Long createInvoice(String billingMonth, Long localCompanyId) {
         String accessToken = oauthService.getAccessToken();
         if (accessToken == null) {
             throw new RuntimeException("freeeアクセストークンが取得できません。先に認証を完了してください。");
@@ -54,9 +63,11 @@ public class FreeeInvoiceService {
             throw new RuntimeException("freee事業所IDが設定されていません。");
         }
 
-        // getEstimatesを使用して請求データを取得
-        var localCompanyId = 1L;
+        // TODO: freeePartnerIdは会社ごとにマッピングが必要
+        // 現在は仮の値を使用
         var freeePartnerId = 108037784L;
+
+        // getEstimatesを使用して請求データを取得
         List<InvoiceEstimate> estimates = invoiceEstimateUseCase.getEstimates(billingMonth, localCompanyId);
 
         if (estimates.isEmpty()) {
