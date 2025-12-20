@@ -1,7 +1,10 @@
 package com.kamiokaweb.redo.service.freee;
 
 import com.kamiokaweb.redo.config.FreeeOAuthConfig;
+import com.kamiokaweb.redo.model.company.Company;
+import com.kamiokaweb.redo.model.company.CompanyId;
 import com.kamiokaweb.redo.model.invoice.InvoiceEstimate;
+import com.kamiokaweb.redo.repository.company.CompanyRepository;
 import com.kamiokaweb.redo.usecase.InvoiceEstimateUseCase;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
@@ -18,17 +21,20 @@ public class FreeeInvoiceService {
     private final FreeeOAuthService oauthService;
     private final FreeeOAuthConfig config;
     private final InvoiceEstimateUseCase invoiceEstimateUseCase;
+    private final CompanyRepository companyRepository;
     private final RestTemplate restTemplate;
     private static final String FREEE_API_BASE_URL = "https://api.freee.co.jp/iv";
 
     public FreeeInvoiceService(
             FreeeOAuthService oauthService,
             FreeeOAuthConfig config,
-            InvoiceEstimateUseCase invoiceEstimateUseCase
+            InvoiceEstimateUseCase invoiceEstimateUseCase,
+            CompanyRepository companyRepository
     ) {
         this.oauthService = oauthService;
         this.config = config;
         this.invoiceEstimateUseCase = invoiceEstimateUseCase;
+        this.companyRepository = companyRepository;
         this.restTemplate = new RestTemplate();
     }
 
@@ -49,10 +55,10 @@ public class FreeeInvoiceService {
      * freee APIに請求書を送信
      *
      * @param billingMonth 請求年月（例: "202512"）
-     * @param localCompanyId ローカルの会社ID
+     * @param companyId 会社ID
      * @return 作成された請求書のID
      */
-    private Long createInvoice(String billingMonth, Long localCompanyId) {
+    private Long createInvoice(String billingMonth, Long companyId) {
         String accessToken = oauthService.getAccessToken();
         if (accessToken == null) {
             throw new RuntimeException("freeeアクセストークンが取得できません。先に認証を完了してください。");
@@ -63,12 +69,17 @@ public class FreeeInvoiceService {
             throw new RuntimeException("freee事業所IDが設定されていません。");
         }
 
-        // TODO: freeePartnerIdは会社ごとにマッピングが必要
-        // 現在は仮の値を使用
-        var freeePartnerId = 108037784L;
+        // CompanyRepositoryからfreeePartnerIdを取得
+        Company company = companyRepository.get(new CompanyId(companyId))
+                .orElseThrow(() -> new RuntimeException("会社が見つかりません: " + companyId));
+
+        Long freeePartnerId = company.freeePartnerId();
+        if (freeePartnerId == null) {
+            throw new RuntimeException("freee取引先IDが設定されていません。会社ID: " + companyId);
+        }
 
         // getEstimatesを使用して請求データを取得
-        List<InvoiceEstimate> estimates = invoiceEstimateUseCase.getEstimates(billingMonth, localCompanyId);
+        List<InvoiceEstimate> estimates = invoiceEstimateUseCase.getEstimates(billingMonth, companyId);
 
         if (estimates.isEmpty()) {
             throw new RuntimeException("指定された請求月のデータが見つかりません");

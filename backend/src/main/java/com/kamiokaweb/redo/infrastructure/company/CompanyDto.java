@@ -14,13 +14,15 @@ public record CompanyDto(
         Long id,
         String name,
         Boolean withholdingTax,
+        Long freeePartnerId,
         LocalDateTime createdAt
 ) {
     public Company from() {
         return new Company(
                 new CompanyId(id),
                 new CompanyName(name),
-                withholdingTax
+                withholdingTax,
+                freeePartnerId
         );
     }
 }

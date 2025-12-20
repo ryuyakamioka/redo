@@ -37,6 +37,7 @@ public class CompanyRepositoryImpl implements CompanyRepository {
                 company.companyId() != null ? company.companyId().value() : null,
                 company.companyName().value(),
                 company.withholdingTax(),
+                company.freeePartnerId(),
                 null
         );
         CompanyDto saved = companyAccessor.save(dto);

@@ -6,6 +6,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 public record Company(
         CompanyId companyId,
         CompanyName companyName,
-        @Schema(description = "源泉徴収有無") Boolean withholdingTax
+        @Schema(description = "源泉徴収有無") Boolean withholdingTax,
+        @Schema(description = "freee取引先ID") Long freeePartnerId
 ) {
 }
