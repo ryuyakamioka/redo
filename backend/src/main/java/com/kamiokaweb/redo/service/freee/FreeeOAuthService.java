@@ -9,7 +9,9 @@ import org.springframework.transaction.annotation.Transactional;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+import org.springframework.web.util.UriUtils;
 
+import java.nio.charset.StandardCharsets;
 import java.time.LocalDateTime;
 import java.util.Map;
 import java.util.UUID;
@@ -32,10 +34,11 @@ public class FreeeOAuthService {
      */
     public String generateAuthorizationUrl() {
         String state = UUID.randomUUID().toString();
+        String encodedRedirectUri = UriUtils.encode(config.getRedirectUri(), StandardCharsets.UTF_8);
         return config.getAuthorizeUrl() +
                 "?response_type=code" +
                 "&client_id=" + config.getClientId() +
-                "&redirect_uri=" + config.getRedirectUri() +
+                "&redirect_uri=" + encodedRedirectUri +
                 "&state=" + state +
                 "&prompt=select_company";
     }

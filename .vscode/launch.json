@@ -9,7 +9,8 @@
             "mainClass": "com.kamiokaweb.redo.RedoApplication",
             "projectName": "redo",
             "args": "",
-            "envFile": "${workspaceFolder}/.env"
+            "envFile": "${workspaceFolder}/.env",
+            "vmArgs": "-Dspring.profiles.active=local"
         },
         {
             "type": "node",
