@@ -173,8 +173,56 @@ const handleFreeeAuth = async () => {
 };
 
 // freee請求書送信ハンドラー
-const handleFreeeSendInvoice = () => {
-  alert('freee請求書送信機能は今後実装予定です');
+const handleFreeeSendInvoice = async () => {
+  if (estimates.value.length === 0) {
+    alert('送信する請求書がありません');
+    return;
+  }
+
+  // TODO: freeeの事業所IDと取引先IDの設定UIが必要
+  // 仮の値として1を使用（実際は設定から取得する必要がある）
+  const freeeCompanyId = 1;
+
+  if (!confirm(`${estimates.value.length}件の請求書をfreeeに送信しますか？`)) {
+    return;
+  }
+
+  try {
+    let successCount = 0;
+    let errorCount = 0;
+
+    for (const estimate of estimates.value) {
+      // freeePartnerId は仮で1を使用（実際は会社ごとにマッピングが必要）
+      const freeePartnerId = 1;
+
+      // billingMonth形式に変換（YYYYMM）
+      const billingMonth = `${estimate.year}${String(estimate.month).padStart(2, '0')}`;
+
+      const requestBody = {
+        billingMonth: billingMonth,
+        freeeCompanyId: freeeCompanyId,
+        freeePartnerId: freeePartnerId,
+        localCompanyId: estimate.companyId
+      };
+
+      try {
+        await useApi().post('/freee/invoices/send', requestBody);
+        successCount++;
+      } catch (error) {
+        console.error('freee請求書送信エラー:', error);
+        errorCount++;
+      }
+    }
+
+    if (errorCount === 0) {
+      alert(`${successCount}件の請求書をfreeeに送信しました`);
+    } else {
+      alert(`成功: ${successCount}件、失敗: ${errorCount}件`);
+    }
+  } catch (error) {
+    console.error('freee請求書送信エラー:', error);
+    alert('freee請求書送信に失敗しました');
+  }
 };
 
 // 初回ロード時に自動で検索
