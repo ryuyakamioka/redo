@@ -1,5 +1,6 @@
 package com.kamiokaweb.redo.service.freee;
 
+import com.kamiokaweb.redo.config.FreeeOAuthConfig;
 import com.kamiokaweb.redo.model.invoice.InvoiceEstimate;
 import com.kamiokaweb.redo.usecase.InvoiceEstimateUseCase;
 import org.springframework.http.*;
@@ -15,15 +16,18 @@ import java.util.Map;
 public class FreeeInvoiceService {
 
     private final FreeeOAuthService oauthService;
+    private final FreeeOAuthConfig config;
     private final InvoiceEstimateUseCase invoiceEstimateUseCase;
     private final RestTemplate restTemplate;
     private static final String FREEE_API_BASE_URL = "https://api.freee.co.jp/iv";
 
     public FreeeInvoiceService(
             FreeeOAuthService oauthService,
+            FreeeOAuthConfig config,
             InvoiceEstimateUseCase invoiceEstimateUseCase
     ) {
         this.oauthService = oauthService;
+        this.config = config;
         this.invoiceEstimateUseCase = invoiceEstimateUseCase;
         this.restTemplate = new RestTemplate();
     }
@@ -38,17 +42,21 @@ public class FreeeInvoiceService {
      * @return 作成された請求書のID
      */
     public Long createInvoice(
-            String billingMonth,
-            Long freeeCompanyId,
-            Long freeePartnerId,
-            Long localCompanyId
+            String billingMonth
     ) {
         String accessToken = oauthService.getAccessToken();
         if (accessToken == null) {
             throw new RuntimeException("freeeアクセストークンが取得できません。先に認証を完了してください。");
         }
 
+        Long freeeCompanyId = config.getCompanyId();
+        if (freeeCompanyId == null) {
+            throw new RuntimeException("freee事業所IDが設定されていません。");
+        }
+
         // getEstimatesを使用して請求データを取得
+        var localCompanyId = 1L;
+        var freeePartnerId = 108037784L;
         List<InvoiceEstimate> estimates = invoiceEstimateUseCase.getEstimates(billingMonth, localCompanyId);
 
         if (estimates.isEmpty()) {

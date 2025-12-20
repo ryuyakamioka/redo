@@ -12,6 +12,7 @@ public class FreeeOAuthConfig {
     private String authorizeUrl;
     private String tokenUrl;
     private String revokeUrl;
+    private Long companyId;
 
     public String getClientId() {
         return clientId;
@@ -59,5 +60,13 @@ public class FreeeOAuthConfig {
 
     public void setRevokeUrl(String revokeUrl) {
         this.revokeUrl = revokeUrl;
+    }
+
+    public Long getCompanyId() {
+        return companyId;
+    }
+
+    public void setCompanyId(Long companyId) {
+        this.companyId = companyId;
     }
 }

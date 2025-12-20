@@ -23,10 +23,7 @@ public class FreeeInvoiceController {
     public ResponseEntity<Map<String, Object>> sendInvoice(@RequestBody SendInvoiceRequest request) {
         try {
             Long invoiceId = freeeInvoiceService.createInvoice(
-                    request.billingMonth(),
-                    request.freeeCompanyId(),
-                    request.freeePartnerId(),
-                    request.localCompanyId()
+                    request.billingMonth()
             );
 
             return ResponseEntity.ok(Map.of(
@@ -43,9 +40,6 @@ public class FreeeInvoiceController {
     }
 
     public record SendInvoiceRequest(
-            String billingMonth,
-            Long freeeCompanyId,
-            Long freeePartnerId,
-            Long localCompanyId
+            String billingMonth
     ) {}
 }
