@@ -73,6 +73,7 @@ class TaskRepositoryImplTest {
                 "テストメモ",
                 List.of(taskItem),
                 LocalDate.now().plusDays(3),
+                null,
                 null
         );
 
@@ -126,6 +127,7 @@ class TaskRepositoryImplTest {
                 null,
                 List.of(),
                 LocalDate.now().plusDays(3),
+                null,
                 null
         );
         taskRepository.register(task);
@@ -168,6 +170,7 @@ class TaskRepositoryImplTest {
                 null,
                 List.of(),
                 LocalDate.now().plusDays(3),
+                null,
                 null
         );
         taskRepository.register(task);
