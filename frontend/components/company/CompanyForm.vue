@@ -30,6 +30,22 @@
           </div>
         </div>
 
+        <div>
+          <label class="block text-sm font-medium text-gray-700 mb-1">
+            freee取引先ID
+            <span class="text-xs text-gray-500 ml-2">（任意）</span>
+          </label>
+          <input
+            type="number"
+            v-model.number="formData.freeePartnerId"
+            placeholder="freee取引先IDを入力"
+            class="w-full h-10 px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          <p class="text-xs text-gray-500 mt-1">
+            freee連携で請求書を送信する場合に必要です
+          </p>
+        </div>
+
         <div class="flex justify-end gap-2">
           <button
             v-if="isEditMode"
@@ -61,6 +77,7 @@ interface Props {
 interface FormData {
   companyName: string;
   withholdingTax: boolean;
+  freeePartnerId: number | null;
 }
 
 const props = defineProps<Props>();
@@ -73,7 +90,8 @@ const isEditMode = computed(() => !!props.editCompany);
 
 const formData = ref<FormData>({
   companyName: "",
-  withholdingTax: false
+  withholdingTax: false,
+  freeePartnerId: null
 });
 
 // 編集モードの場合、フォームに値を設定
@@ -81,12 +99,14 @@ watch(() => props.editCompany, (company) => {
   if (company) {
     formData.value = {
       companyName: company.companyName,
-      withholdingTax: company.withholdingTax
+      withholdingTax: company.withholdingTax,
+      freeePartnerId: company.freeePartnerId
     };
   } else {
     formData.value = {
       companyName: "",
-      withholdingTax: false
+      withholdingTax: false,
+      freeePartnerId: null
     };
   }
 }, { immediate: true });
@@ -95,7 +115,8 @@ const handleSubmit = () => {
   const data = {
     companyId: props.editCompany ? { value: props.editCompany.companyId } : null,
     companyName: { value: formData.value.companyName },
-    withholdingTax: formData.value.withholdingTax
+    withholdingTax: formData.value.withholdingTax,
+    freeePartnerId: formData.value.freeePartnerId || null
   };
 
   emit("submit", data);
@@ -104,7 +125,8 @@ const handleSubmit = () => {
   if (!isEditMode.value) {
     formData.value = {
       companyName: "",
-      withholdingTax: false
+      withholdingTax: false,
+      freeePartnerId: null
     };
   }
 };
