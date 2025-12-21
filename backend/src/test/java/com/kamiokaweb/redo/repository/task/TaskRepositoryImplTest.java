@@ -43,13 +43,15 @@ class TaskRepositoryImplTest {
         var company = new Company(
                 new CompanyId(1L),
                 new CompanyName("株式会社サンプル"),
-                true
+                true,
+                null
         );
         var client = new Client(
                 new ClientId(1L),
                 new ClientName("顧客A"),
                 new ClientAbbreviation("A"),
-                company
+                company,
+                true
         );
         var item = new Item(
                 new ItemId(1L),
@@ -105,13 +107,15 @@ class TaskRepositoryImplTest {
         var company = new Company(
                 new CompanyId(1L),
                 new CompanyName("株式会社サンプル"),
-                true
+                true,
+                null
         );
         var client = new Client(
                 new ClientId(1L),
                 new ClientName("顧客A"),
                 new ClientAbbreviation("A"),
-                company
+                company,
+                true
         );
         var task = new Task(
                 new TaskId(0L),
@@ -145,13 +149,15 @@ class TaskRepositoryImplTest {
         var company = new Company(
                 new CompanyId(1L),
                 new CompanyName("株式会社サンプル"),
-                true
+                true,
+                null
         );
         var client = new Client(
                 new ClientId(1L),
                 new ClientName("顧客A"),
                 new ClientAbbreviation("A"),
-                company
+                company,
+                true
         );
         var task = new Task(
                 new TaskId(0L),

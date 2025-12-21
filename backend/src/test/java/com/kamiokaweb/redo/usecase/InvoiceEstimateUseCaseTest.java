@@ -65,30 +65,35 @@ class InvoiceEstimateUseCaseTest {
         company1 = new Company(
                 new CompanyId(1L),
                 new CompanyName("株式会社サンプル"),
-                true
+                true,
+                null
         );
         company2 = new Company(
                 new CompanyId(2L),
                 new CompanyName("テスト株式会社"),
-                false
+                false,
+                null
         );
         client1 = new Client(
                 new ClientId(1L),
                 new ClientName("顧客A"),
                 new ClientAbbreviation("A"),
-                company1
+                company1,
+                true
         );
         client2 = new Client(
                 new ClientId(2L),
                 new ClientName("顧客B"),
                 new ClientAbbreviation("B"),
-                company1
+                company1,
+                true
         );
         client3 = new Client(
                 new ClientId(3L),
                 new ClientName("顧客C"),
                 new ClientAbbreviation("C"),
-                company2
+                company2,
+                true
         );
         item1 = new Item(
                 new ItemId(1L),
