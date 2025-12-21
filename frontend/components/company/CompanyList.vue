@@ -28,6 +28,13 @@
               源泉徴収
               <span v-if="sortKey === 'withholdingTax'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              @click="sort('freeePartnerId')"
+            >
+              freee取引先ID
+              <span v-if="sortKey === 'freeePartnerId'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+            </th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
             </th>
@@ -52,6 +59,9 @@
               >
                 {{ company.withholdingTax ? 'あり' : 'なし' }}
               </span>
+            </td>
+            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">
+              {{ company.freeePartnerId || '-' }}
             </td>
             <td class="px-4 py-2 whitespace-nowrap text-sm">
               <button
@@ -114,6 +124,10 @@ const sortedCompanies = computed(() => {
       case 'withholdingTax':
         aValue = a.withholdingTax ? 1 : 0;
         bValue = b.withholdingTax ? 1 : 0;
+        break;
+      case 'freeePartnerId':
+        aValue = a.freeePartnerId ?? 0;
+        bValue = b.freeePartnerId ?? 0;
         break;
       default:
         return 0;

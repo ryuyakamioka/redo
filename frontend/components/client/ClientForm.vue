@@ -47,6 +47,22 @@
           </div>
         </div>
 
+        <div>
+          <label class="flex items-center gap-2">
+            <input
+              type="checkbox"
+              v-model="formData.showClientNameInDescription"
+              class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+            />
+            <span class="text-sm font-medium text-gray-700">
+              摘要に依頼人名を表示する
+            </span>
+          </label>
+          <p class="text-xs text-gray-500 mt-1 ml-6">
+            チェックを入れると、請求書の摘要欄に「品目名（依頼人名）」の形式で表示されます
+          </p>
+        </div>
+
         <div class="flex justify-end gap-2">
           <button
             v-if="isEditMode"
@@ -81,6 +97,7 @@ interface FormData {
   clientName: string;
   clientAbbreviation: string;
   companyId: number | null;
+  showClientNameInDescription: boolean;
 }
 
 const props = defineProps<Props>();
@@ -94,7 +111,8 @@ const isEditMode = computed(() => !!props.editClient);
 const formData = ref<FormData>({
   clientName: "",
   clientAbbreviation: "",
-  companyId: null
+  companyId: null,
+  showClientNameInDescription: true
 });
 
 // 編集モードの場合、フォームに値を設定
@@ -103,13 +121,15 @@ watch(() => props.editClient, (client) => {
     formData.value = {
       clientName: client.clientName,
       clientAbbreviation: client.clientAbbreviation,
-      companyId: client.company.companyId
+      companyId: client.company.companyId,
+      showClientNameInDescription: client.showClientNameInDescription
     };
   } else {
     formData.value = {
       clientName: "",
       clientAbbreviation: "",
-      companyId: null
+      companyId: null,
+      showClientNameInDescription: true
     };
   }
 }, { immediate: true });
@@ -129,7 +149,8 @@ const handleSubmit = () => {
       companyId: { value: selectedCompany.companyId },
       companyName: { value: selectedCompany.companyName },
       withholdingTax: selectedCompany.withholdingTax
-    }
+    },
+    showClientNameInDescription: formData.value.showClientNameInDescription
   };
 
   emit("submit", data);
@@ -139,7 +160,8 @@ const handleSubmit = () => {
     formData.value = {
       clientName: "",
       clientAbbreviation: "",
-      companyId: null
+      companyId: null,
+      showClientNameInDescription: true
     };
   }
 };

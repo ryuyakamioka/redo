@@ -35,6 +35,13 @@
               会社
               <span v-if="sortKey === 'company'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
+            <th
+              class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider cursor-pointer hover:bg-gray-100"
+              @click="sort('showClientNameInDescription')"
+            >
+              摘要表示
+              <span v-if="sortKey === 'showClientNameInDescription'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+            </th>
             <th class="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
               操作
             </th>
@@ -57,6 +64,14 @@
             </td>
             <td class="px-4 py-2 text-sm text-gray-700">
               {{ client.company.companyName }}
+            </td>
+            <td class="px-4 py-2 whitespace-nowrap text-sm text-gray-700">
+              <span
+                :class="client.showClientNameInDescription ? 'bg-blue-100 text-blue-800' : 'bg-gray-100 text-gray-800'"
+                class="px-2 py-1 rounded-full text-xs"
+              >
+                {{ client.showClientNameInDescription ? '表示' : '非表示' }}
+              </span>
             </td>
             <td class="px-4 py-2 whitespace-nowrap text-sm">
               <button
@@ -123,6 +138,10 @@ const sortedClients = computed(() => {
       case 'company':
         aValue = a.company.companyName;
         bValue = b.company.companyName;
+        break;
+      case 'showClientNameInDescription':
+        aValue = a.showClientNameInDescription ? 1 : 0;
+        bValue = b.showClientNameInDescription ? 1 : 0;
         break;
       default:
         return 0;

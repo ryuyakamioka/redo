@@ -44,6 +44,7 @@ public class ClientRepositoryImpl implements ClientRepository {
                 client.clientName().value(),
                 client.clientAbbreviation().value(),
                 client.company().companyId().value(),
+                client.showClientNameInDescription(),
                 null
         );
         ClientDto saved = clientAccessor.save(dto);

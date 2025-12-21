@@ -30,10 +30,17 @@ public record InvoiceEstimateItem(
 
     /**
      * 摘要をフォーマット: 品目名（依頼人名）
+     * 依頼人の設定により、依頼人名の表示/非表示を制御
      */
     private static String formatDescription(TaskItem taskItem, Client client) {
         String itemName = taskItem.item().itemName().value();
-        String clientName = client.clientName().value();
-        return itemName + "（" + clientName + "）";
+
+        // 依頼人名を摘要に表示する設定の場合のみ追加
+        if (client.showClientNameInDescription()) {
+            String clientName = client.clientName().value();
+            return itemName + "（" + clientName + "）";
+        }
+
+        return itemName;
     }
 }

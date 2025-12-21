@@ -17,6 +17,7 @@ public record ClientDto(
         String name,
         String abbreviation,
         Long companyId,
+        Boolean showClientNameInDescription,
         LocalDateTime createdAt
 ) {
     public Client from(Company company) {
@@ -24,7 +25,8 @@ public record ClientDto(
                 new ClientId(id),
                 new ClientName(name),
                 new ClientAbbreviation(abbreviation),
-                company
+                company,
+                showClientNameInDescription != null ? showClientNameInDescription : true
         );
     }
 }
