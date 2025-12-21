@@ -55,6 +55,7 @@ public class TaskRepositoryImpl implements TaskRepository {
                     task.note(),
                     task.expectedDeliveryDate(),
                     task.deliveryDate(),
+                    task.billingDate(),
                     existingTask.get().createdAt()  // 既存のcreated_atを保持
                 );
             } else {
@@ -142,6 +143,7 @@ public class TaskRepositoryImpl implements TaskRepository {
                     taskDto.note(),
                     taskDto.expectedDeliveryDate(),
                     java.time.LocalDate.now(),
+                    taskDto.billingDate(),
                     taskDto.createdAt()
             );
             taskAccessor.save(completedTask);
@@ -161,6 +163,7 @@ public class TaskRepositoryImpl implements TaskRepository {
                     taskDto.note(),
                     taskDto.expectedDeliveryDate(),
                     null,
+                    taskDto.billingDate(),
                     taskDto.createdAt()
             );
             taskAccessor.save(revertedTask);
@@ -180,6 +183,27 @@ public class TaskRepositoryImpl implements TaskRepository {
                     taskDto.note(),
                     taskDto.expectedDeliveryDate(),
                     status == com.kamiokaweb.redo.model.task.TaskStatus.DONE ? java.time.LocalDate.now() : null,
+                    taskDto.billingDate(),
+                    taskDto.createdAt()
+            );
+            taskAccessor.save(updatedTask);
+        });
+    }
+
+    @Override
+    @Transactional
+    public void updateBillingDate(TaskId taskId, java.time.LocalDate billingDate) {
+        taskAccessor.findById(taskId.value()).ifPresent(taskDto -> {
+            var updatedTask = new TaskDto(
+                    taskDto.id(),
+                    taskDto.title(),
+                    taskDto.status(),
+                    taskDto.requestDate(),
+                    taskDto.clientId(),
+                    taskDto.note(),
+                    taskDto.expectedDeliveryDate(),
+                    taskDto.deliveryDate(),
+                    billingDate,
                     taskDto.createdAt()
             );
             taskAccessor.save(updatedTask);

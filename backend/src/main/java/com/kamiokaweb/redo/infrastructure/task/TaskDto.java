@@ -24,6 +24,7 @@ public record TaskDto(
         String note,
         LocalDate expectedDeliveryDate,
         LocalDate deliveryDate,
+        LocalDate billingDate,
         LocalDateTime createdAt
 ) {
         public TaskDto(Task task) {
@@ -36,6 +37,7 @@ public record TaskDto(
                         task.note(),
                         task.expectedDeliveryDate(),
                         task.deliveryDate(),
+                        task.billingDate(),
                         LocalDateTime.now()
                 );
         }
@@ -50,7 +52,8 @@ public record TaskDto(
                         note,
                         taskItems,
                         expectedDeliveryDate,
-                        deliveryDate
+                        deliveryDate,
+                        billingDate
                 );
         }
 }

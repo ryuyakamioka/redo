@@ -32,6 +32,13 @@
               着手予定日
               <span v-if="sortKey === 'expectedDeliveryDate'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
             </th>
+            <th
+              class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200 cursor-pointer hover:bg-gray-100"
+              @click="sort('deliveryDate')"
+            >
+              納品日
+              <span v-if="sortKey === 'deliveryDate'" class="ml-1">{{ sortOrder === 'asc' ? '▲' : '▼' }}</span>
+            </th>
             <th class="px-4 py-2 text-left text-xs font-semibold text-gray-600 uppercase tracking-wider border-r border-gray-200">
               品目
             </th>
@@ -128,6 +135,10 @@ const sortedTasks = computed(() => {
       case 'expectedDeliveryDate':
         aValue = a.expectedDeliveryDate || '';
         bValue = b.expectedDeliveryDate || '';
+        break;
+      case 'deliveryDate':
+        aValue = a.deliveryDate || '';
+        bValue = b.deliveryDate || '';
         break;
       case 'amount':
         aValue = a.taskItems.reduce((sum, item) => sum + item.amount, 0);

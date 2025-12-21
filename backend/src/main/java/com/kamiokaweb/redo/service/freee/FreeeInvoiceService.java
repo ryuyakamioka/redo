@@ -6,6 +6,7 @@ import com.kamiokaweb.redo.model.company.CompanyId;
 import com.kamiokaweb.redo.model.invoice.InvoiceEstimate;
 import com.kamiokaweb.redo.repository.company.CompanyRepository;
 import com.kamiokaweb.redo.usecase.InvoiceEstimateUseCase;
+import com.kamiokaweb.redo.usecase.TaskUseCase;
 import org.springframework.http.*;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestTemplate;
@@ -22,6 +23,7 @@ public class FreeeInvoiceService {
     private final FreeeOAuthConfig config;
     private final InvoiceEstimateUseCase invoiceEstimateUseCase;
     private final CompanyRepository companyRepository;
+    private final TaskUseCase taskUseCase;
     private final RestTemplate restTemplate;
     private static final String FREEE_API_BASE_URL = "https://api.freee.co.jp/iv";
 
@@ -29,12 +31,14 @@ public class FreeeInvoiceService {
             FreeeOAuthService oauthService,
             FreeeOAuthConfig config,
             InvoiceEstimateUseCase invoiceEstimateUseCase,
-            CompanyRepository companyRepository
+            CompanyRepository companyRepository,
+            TaskUseCase taskUseCase
     ) {
         this.oauthService = oauthService;
         this.config = config;
         this.invoiceEstimateUseCase = invoiceEstimateUseCase;
         this.companyRepository = companyRepository;
+        this.taskUseCase = taskUseCase;
         this.restTemplate = new RestTemplate();
     }
 
@@ -80,6 +84,9 @@ public class FreeeInvoiceService {
 
         // getEstimatesを使用して請求データを取得
         List<InvoiceEstimate> estimates = invoiceEstimateUseCase.getEstimates(billingMonth, companyId);
+
+        // 請求対象のタスクIDを取得
+        List<Long> taskIds = invoiceEstimateUseCase.getTaskIdsForInvoice(billingMonth, companyId);
 
         if (estimates.isEmpty()) {
             throw new RuntimeException("指定された請求月のデータが見つかりません");
@@ -138,6 +145,12 @@ public class FreeeInvoiceService {
                 Map<String, Object> body = response.getBody();
                 @SuppressWarnings("unchecked")
                 Map<String, Object> invoice = (Map<String, Object>) body.get("invoice");
+
+                // 請求書送信成功後、対象タスクの請求日を更新
+                if (!taskIds.isEmpty()) {
+                    taskUseCase.updateBillingDates(taskIds, LocalDate.now());
+                }
+
                 return ((Number) invoice.get("id")).longValue();
             }
 

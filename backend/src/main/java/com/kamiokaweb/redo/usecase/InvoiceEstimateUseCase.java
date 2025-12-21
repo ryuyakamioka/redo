@@ -30,6 +30,34 @@ public class InvoiceEstimateUseCase {
     }
 
     /**
+     * 指定された請求月・会社IDに対応する依頼IDリストを取得する
+     *
+     * @param billingMonth 請求予定年月（形式: "202512"）
+     * @param companyId 会社ID
+     * @return 依頼IDリスト
+     */
+    public List<Long> getTaskIdsForInvoice(String billingMonth, Long companyId) {
+        // 請求予定年月をパース
+        Year year = Year.parse(billingMonth.substring(0, 4));
+        Month month = Month.of(Integer.parseInt(billingMonth.substring(4, 6)));
+
+        // 締日を計算
+        LocalDate closingDate = LocalDate.of(year.getValue(), month.getValue(), CLOSING_DAY);
+
+        // 全ての完了済み依頼を取得
+        var allTasks = taskRepository.getList();
+
+        // フィルタリング: 完了済み、納品日が締日以前、会社IDが一致、請求日がnull
+        return allTasks.stream()
+            .filter(task -> "DONE".equals(task.taskStatus().name()))
+            .filter(task -> task.deliveryDate() != null && !task.deliveryDate().isAfter(closingDate))
+            .filter(task -> task.client() != null && task.client().company().companyId().value().equals(companyId))
+            .filter(task -> task.billingDate() == null) // 未請求のもののみ
+            .map(task -> task.taskId().value())
+            .toList();
+    }
+
+    /**
      * 請求予定を取得する
      *
      * @param billingMonth 請求予定年月（形式: "202512"）

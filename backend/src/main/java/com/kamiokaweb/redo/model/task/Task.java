@@ -16,5 +16,6 @@ public record Task(
         @Schema(description = "希望記入欄（メモ）") String note,
         @Schema(description = "依頼明細") List<TaskItem> taskItems,
         @Schema(description = "着手予定日") LocalDate expectedDeliveryDate,
-        @Schema(description = "納品日") LocalDate deliveryDate
+        @Schema(description = "納品日") LocalDate deliveryDate,
+        @Schema(description = "請求日") LocalDate billingDate
 ) {}

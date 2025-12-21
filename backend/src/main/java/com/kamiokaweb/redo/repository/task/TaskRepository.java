@@ -3,8 +3,9 @@ package com.kamiokaweb.redo.repository.task;
 import com.kamiokaweb.redo.model.task.Task;
 import com.kamiokaweb.redo.model.task.TaskId;
 
-import java.util.Optional;
+import java.time.LocalDate;
 import java.util.List;
+import java.util.Optional;
 
 public interface TaskRepository {
 
@@ -21,4 +22,6 @@ public interface TaskRepository {
     void revert(TaskId taskId);
 
     void updateStatus(TaskId taskId, com.kamiokaweb.redo.model.task.TaskStatus status);
+
+    void updateBillingDate(TaskId taskId, LocalDate billingDate);
 }

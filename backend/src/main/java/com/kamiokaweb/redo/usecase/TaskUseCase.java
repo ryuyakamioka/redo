@@ -5,6 +5,7 @@ import com.kamiokaweb.redo.model.task.TaskId;
 import com.kamiokaweb.redo.repository.task.TaskRepository;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @Service
@@ -46,5 +47,13 @@ public class TaskUseCase {
 
     public void updateStatus(TaskId taskId, com.kamiokaweb.redo.model.task.TaskStatus status) {
         taskRepository.updateStatus(taskId, status);
+    }
+
+    public void updateBillingDate(TaskId taskId, LocalDate billingDate) {
+        taskRepository.updateBillingDate(taskId, billingDate);
+    }
+
+    public void updateBillingDates(List<Long> taskIds, LocalDate billingDate) {
+        taskIds.forEach(taskId -> updateBillingDate(new TaskId(taskId), billingDate));
     }
 }
