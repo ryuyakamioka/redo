@@ -119,7 +119,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task1);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202512", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202512", null, null);
 
         // Assert
         assertThat(estimates).isNotEmpty();
@@ -145,7 +145,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task2);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202601", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202601", null, null);
 
         // Assert
         var estimate = estimates.stream()
@@ -177,7 +177,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task2);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202512", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202512", null, null);
 
         // Assert
         var estimate = estimates.stream()
@@ -213,7 +213,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task2);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202602", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202602", null, null);
 
         // Assert
         var estimate = estimates.stream()
@@ -241,7 +241,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task2);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202603", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202603", null, null);
 
         // Assert
         var estimate = estimates.stream()
@@ -269,7 +269,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task2);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202512", 1L);
+        var estimates = invoiceEstimateUseCase.getEstimates("202512", 1L, null);
 
         // Assert
         assertThat(estimates).hasSize(1);
@@ -288,7 +288,7 @@ class InvoiceEstimateUseCaseTest {
         taskRepository.register(task);
 
         // Act
-        var estimates = invoiceEstimateUseCase.getEstimates("202604", null);
+        var estimates = invoiceEstimateUseCase.getEstimates("202604", null, null);
 
         // Assert
         var estimate = estimates.stream()

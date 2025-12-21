@@ -82,8 +82,8 @@ public class FreeeInvoiceService {
             throw new RuntimeException("freee取引先IDが設定されていません。会社ID: " + companyId);
         }
 
-        // getEstimatesを使用して請求データを取得
-        List<InvoiceEstimate> estimates = invoiceEstimateUseCase.getEstimates(billingMonth, companyId);
+        // getEstimatesを使用して請求データを取得（未請求のみ取得する必要はないのでnullを指定）
+        List<InvoiceEstimate> estimates = invoiceEstimateUseCase.getEstimates(billingMonth, companyId, null);
 
         // 請求対象のタスクIDを取得
         List<Long> taskIds = invoiceEstimateUseCase.getTaskIdsForInvoice(billingMonth, companyId);
