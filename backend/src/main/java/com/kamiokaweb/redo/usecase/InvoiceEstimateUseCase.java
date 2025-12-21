@@ -15,6 +15,7 @@ import com.kamiokaweb.redo.model.invoice.AccountingPeriod;
 import com.kamiokaweb.redo.model.invoice.InvoiceEstimate;
 import com.kamiokaweb.redo.model.invoice.InvoiceEstimateItem;
 import com.kamiokaweb.redo.model.invoice.InvoiceEstimateItemAggregator;
+import com.kamiokaweb.redo.model.task.Task;
 import com.kamiokaweb.redo.repository.task.TaskRepository;
 
 @Service
@@ -56,7 +57,7 @@ public class InvoiceEstimateUseCase {
             .toList();
 
         // 会社ごとにグループ化
-        Map<Long, List<com.kamiokaweb.redo.model.task.Task>> tasksByCompany = filteredTasks.stream()
+        Map<Long, List<Task>> tasksByCompany = filteredTasks.stream()
             .filter(task -> task.client() != null && task.client().company() != null)
             .collect(Collectors.groupingBy(task -> task.client().company().companyId().value()));
 

@@ -94,15 +94,17 @@ public class FreeeInvoiceService {
 
         Map<String, Object> requestBody = new HashMap<>();
         requestBody.put("company_id", freeeCompanyId);
-        requestBody.put("partner_id", freeePartnerId);
-        requestBody.put("issue_date", LocalDate.now().toString());
+        requestBody.put("partner_id", freeePartnerId); // 取引先ID
+        requestBody.put("issue_date", LocalDate.now().toString()); // 発生日
 
         // 必須パラメータを追加
         requestBody.put("billing_date", LocalDate.now().toString()); // 請求日
+        requestBody.put("payment_type", "transfer"); // 銀行振込
         requestBody.put("tax_entry_method", "out"); // 外税
-        requestBody.put("tax_fraction", "round"); // 四捨五入
-        requestBody.put("withholding_tax_entry_method", "out"); // 源泉徴収税を含めない
-        requestBody.put("partner_title", "御中"); // 取引先名（敬称）
+        requestBody.put("tax_fraction", "omit"); // 消費税端数の計算方法（omit: 切り捨て、round_up: 切り上げ、round: 四捨五入）
+        requestBody.put("withholding_tax_entry_method", "out"); // 源泉徴収の計算方法（in: 税込み価格で計算、out: 税別価格で計算）
+        requestBody.put("partner_title", "御中"); // 敬称（御中、様、(空白)の3つから選択）
+        requestBody.put("invoice_note", "誠に勝手ながら、振込手数料はご負担をお願いいたします。");
 
         // InvoiceEstimateItemをfreee APIの"lines"形式に変換
         List<Map<String, Object>> lines = estimate.items().stream()
@@ -111,9 +113,10 @@ public class FreeeInvoiceService {
                     line.put("type", "item");
                     line.put("description", item.description());
                     line.put("quantity", item.quantity());
-                    // unit_priceは文字列で送信
+                    // line.put("unit", "枚");
                     line.put("unit_price", item.unitPrice().toString());
                     line.put("tax_rate", 10);
+                    line.put("withholding", company.withholdingTax());
                     return line;
                 })
                 .toList();
