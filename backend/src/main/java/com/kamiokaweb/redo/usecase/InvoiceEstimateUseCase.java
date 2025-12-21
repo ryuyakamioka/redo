@@ -62,9 +62,10 @@ public class InvoiceEstimateUseCase {
      *
      * @param billingMonth 請求予定年月（形式: "202512"）
      * @param companyId 会社ID（任意）
+     * @param onlyUnbilled 未請求のみ取得（任意、デフォルトfalse）
      * @return 請求予定リスト
      */
-    public List<InvoiceEstimate> getEstimates(String billingMonth, Long companyId) {
+    public List<InvoiceEstimate> getEstimates(String billingMonth, Long companyId, Boolean onlyUnbilled) {
         // 請求予定年月をパース
         Year year = Year.parse(billingMonth.substring(0, 4));
         Month month = Month.of(Integer.parseInt(billingMonth.substring(4, 6)));
@@ -76,12 +77,13 @@ public class InvoiceEstimateUseCase {
         // 全ての完了済み依頼を取得
         var allTasks = taskRepository.getList();
 
-        // フィルタリング: 完了済み、納品日が締日以前、会社IDが一致（指定されている場合）
+        // フィルタリング: 完了済み、納品日が締日以前、会社IDが一致（指定されている場合）、未請求のみ（指定されている場合）
         var filteredTasks = allTasks.stream()
             .filter(task -> "DONE".equals(task.taskStatus().name()))
             .filter(task -> task.deliveryDate() != null && !task.deliveryDate().isAfter(closingDate))
             .filter(task -> companyId == null ||
                 (task.client() != null && task.client().company().companyId().value().equals(companyId)))
+            .filter(task -> onlyUnbilled == null || !onlyUnbilled || task.billingDate() == null)
             .toList();
 
         // 会社ごとにグループ化

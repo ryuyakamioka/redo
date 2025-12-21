@@ -21,6 +21,17 @@
                   class="px-3 py-2 border border-gray-300 rounded focus:outline-none focus:ring-2 focus:ring-blue-500"
                 />
               </div>
+              <div class="flex items-center gap-2">
+                <input
+                  type="checkbox"
+                  id="showOnlyUnbilled"
+                  v-model="showOnlyUnbilled"
+                  class="w-4 h-4 text-blue-600 border-gray-300 rounded focus:ring-blue-500"
+                />
+                <label for="showOnlyUnbilled" class="text-sm text-gray-700 cursor-pointer">
+                  未請求のみ表示
+                </label>
+              </div>
             </div>
             <div class="text-sm text-gray-600">
               表示中の請求予定: <span class="font-medium text-gray-700">{{ summary.count }}件</span> <span class="font-medium text-gray-700">¥{{ summary.total.toLocaleString() }}</span>
@@ -123,7 +134,7 @@
 <script setup lang="ts">
 import { useInvoiceStore } from "~/stores/invoice";
 import { useCompanyStore } from "~/stores/company";
-import { computed, ref } from "vue";
+import { computed, ref, watch } from "vue";
 import PageHeader from "~/components/layout/PageHeader.vue";
 
 const invoiceStore = useInvoiceStore();
@@ -137,6 +148,9 @@ const estimates = computed(() => invoiceStore.estimates);
 
 // 送信対象の会社IDリスト
 const selectedCompanyIds = ref<number[]>([]);
+
+// 未請求のみ表示フラグ
+const showOnlyUnbilled = ref<boolean>(true);
 
 // 請求予定のサマリー
 const summary = computed(() => {
@@ -158,7 +172,7 @@ const fetchEstimates = async () => {
     // YYYY-MM形式からYYYYMMに変換
     const billingMonth = selectedMonth.value.replace('-', '');
 
-    await invoiceStore.fetchEstimates(billingMonth);
+    await invoiceStore.fetchEstimates(billingMonth, undefined, showOnlyUnbilled.value);
   } catch (error) {
     console.error("請求予定の取得に失敗しました:", error);
     alert("請求予定の取得に失敗しました");
@@ -216,6 +230,11 @@ const handleFreeeSendInvoice = async () => {
     alert(errorMessage);
   }
 };
+
+// 未請求フラグの変更を監視
+watch(showOnlyUnbilled, () => {
+  fetchEstimates();
+});
 
 // 初回ロード時に自動で検索
 await fetchEstimates();

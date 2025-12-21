@@ -27,9 +27,11 @@ public class InvoiceController {
         @Parameter(description = "請求予定年月（形式: 202512）", required = true)
         @RequestParam String billingMonth,
         @Parameter(description = "請求先会社ID（任意、未指定の場合は全会社）")
-        @RequestParam(required = false) Long companyId
+        @RequestParam(required = false) Long companyId,
+        @Parameter(description = "未請求のみ取得（任意、デフォルトfalse）")
+        @RequestParam(required = false) Boolean onlyUnbilled
     ) {
-        var estimates = invoiceEstimateUseCase.getEstimates(billingMonth, companyId);
+        var estimates = invoiceEstimateUseCase.getEstimates(billingMonth, companyId, onlyUnbilled);
         return InvoiceEstimateResponse.from(estimates);
     }
 }

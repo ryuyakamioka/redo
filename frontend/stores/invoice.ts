@@ -7,13 +7,16 @@ export const useInvoiceStore = defineStore("invoice", {
     estimates: [] as InvoiceEstimate[],
   }),
   actions: {
-    async fetchEstimates(billingMonth: string, companyId?: number) {
+    async fetchEstimates(billingMonth: string, companyId?: number, onlyUnbilled?: boolean) {
       try {
-        const params: Record<string, string | number> = {
+        const params: Record<string, string | number | boolean> = {
           billingMonth,
         };
         if (companyId !== undefined) {
           params.companyId = companyId;
+        }
+        if (onlyUnbilled !== undefined) {
+          params.onlyUnbilled = onlyUnbilled;
         }
 
         const response = await useApi().get<InvoiceEstimateResponse>(
