@@ -53,6 +53,7 @@ class TaskUseCaseTest {
                 "UseCaseテストメモ",
                 List.of(),
                 LocalDate.now().plusDays(3),
+                null,
                 null
         );
 
@@ -118,6 +119,7 @@ class TaskUseCaseTest {
                 null,
                 List.of(),
                 LocalDate.now().plusDays(3),
+                null,
                 null
         );
         taskUseCase.register(task);

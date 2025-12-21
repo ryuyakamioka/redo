@@ -309,7 +309,8 @@ class InvoiceEstimateUseCaseTest {
                 null,
                 taskItems,
                 deliveryDate,
-                deliveryDate
+                deliveryDate,
+                null
         );
     }
 
