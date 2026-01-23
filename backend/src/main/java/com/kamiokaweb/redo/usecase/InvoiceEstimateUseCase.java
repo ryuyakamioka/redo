@@ -41,16 +41,21 @@ public class InvoiceEstimateUseCase {
         Year year = Year.parse(billingMonth.substring(0, 4));
         Month month = Month.of(Integer.parseInt(billingMonth.substring(4, 6)));
 
-        // 締日を計算
+        // 締日を計算（当月20日）
         LocalDate closingDate = LocalDate.of(year.getValue(), month.getValue(), CLOSING_DAY);
+
+        // 開始日を計算（前月21日）
+        LocalDate startDate = closingDate.minusMonths(1).withDayOfMonth(CLOSING_DAY + 1);
 
         // 全ての完了済み依頼を取得
         var allTasks = taskRepository.getList();
 
-        // フィルタリング: 完了済み、納品日が締日以前、会社IDが一致、請求日がnull
+        // フィルタリング: 完了済み、納品日が期間内（前月21日〜当月20日）、会社IDが一致、請求日がnull
         return allTasks.stream()
             .filter(task -> "DONE".equals(task.taskStatus().name()))
-            .filter(task -> task.deliveryDate() != null && !task.deliveryDate().isAfter(closingDate))
+            .filter(task -> task.deliveryDate() != null &&
+                !task.deliveryDate().isBefore(startDate) &&
+                !task.deliveryDate().isAfter(closingDate))
             .filter(task -> task.client() != null && task.client().company().companyId().value().equals(companyId))
             .filter(task -> task.billingDate() == null) // 未請求のもののみ
             .map(task -> task.taskId().value())
@@ -71,16 +76,21 @@ public class InvoiceEstimateUseCase {
         Month month = Month.of(Integer.parseInt(billingMonth.substring(4, 6)));
         AccountingPeriod accountingPeriod = new AccountingPeriod(year, month);
 
-        // 締日を計算
+        // 締日を計算（当月20日）
         LocalDate closingDate = LocalDate.of(year.getValue(), month.getValue(), CLOSING_DAY);
+
+        // 開始日を計算（前月21日）
+        LocalDate startDate = closingDate.minusMonths(1).withDayOfMonth(CLOSING_DAY + 1);
 
         // 全ての完了済み依頼を取得
         var allTasks = taskRepository.getList();
 
-        // フィルタリング: 完了済み、納品日が締日以前、会社IDが一致（指定されている場合）、未請求のみ（指定されている場合）
+        // フィルタリング: 完了済み、納品日が期間内（前月21日〜当月20日）、会社IDが一致（指定されている場合）、未請求のみ（指定されている場合）
         var filteredTasks = allTasks.stream()
             .filter(task -> "DONE".equals(task.taskStatus().name()))
-            .filter(task -> task.deliveryDate() != null && !task.deliveryDate().isAfter(closingDate))
+            .filter(task -> task.deliveryDate() != null &&
+                !task.deliveryDate().isBefore(startDate) &&
+                !task.deliveryDate().isAfter(closingDate))
             .filter(task -> companyId == null ||
                 (task.client() != null && task.client().company().companyId().value().equals(companyId)))
             .filter(task -> onlyUnbilled == null || !onlyUnbilled || task.billingDate() == null)

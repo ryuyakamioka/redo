@@ -32,14 +32,18 @@ class TaskControllerTest {
         String requestBody = """
                 {
                     "task": {
-                        "taskId": 0,
+                        "taskId": {
+                            "value": 0
+                        },
                         "taskTitle": {
                             "value": "APIテスト依頼"
                         },
                         "taskStatus": "TODO",
                         "requestDate": "2025-01-15",
                         "client": {
-                            "clientId": 1,
+                            "clientId": {
+                                "value": 1
+                            },
                             "clientName": {
                                 "value": "顧客A"
                             },
@@ -47,12 +51,16 @@ class TaskControllerTest {
                                 "value": "A"
                             },
                             "company": {
-                                "companyId": 1,
+                                "companyId": {
+                                    "value": 1
+                                },
                                 "companyName": {
                                     "value": "株式会社サンプル"
                                 },
-                                "withholdingTax": true
-                            }
+                                "withholdingTax": true,
+                                "freeePartnerId": null
+                            },
+                            "showClientNameInDescription": false
                         },
                         "note": "APIテストメモ",
                         "taskItems": [],
@@ -74,14 +82,18 @@ class TaskControllerTest {
         String requestBody = """
                 {
                     "task": {
-                        "taskId": 0,
+                        "taskId": {
+                            "value": 0
+                        },
                         "taskTitle": {
                             "value": "削除テスト依頼"
                         },
                         "taskStatus": "TODO",
                         "requestDate": "2025-01-15",
                         "client": {
-                            "clientId": 1,
+                            "clientId": {
+                                "value": 1
+                            },
                             "clientName": {
                                 "value": "顧客A"
                             },
@@ -89,12 +101,16 @@ class TaskControllerTest {
                                 "value": "A"
                             },
                             "company": {
-                                "companyId": 1,
+                                "companyId": {
+                                    "value": 1
+                                },
                                 "companyName": {
                                     "value": "株式会社サンプル"
                                 },
-                                "withholdingTax": true
-                            }
+                                "withholdingTax": true,
+                                "freeePartnerId": null
+                            },
+                            "showClientNameInDescription": false
                         },
                         "note": null,
                         "taskItems": [],
