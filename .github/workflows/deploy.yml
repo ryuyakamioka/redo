@@ -20,7 +20,7 @@ jobs:
           username: ${{ secrets.EC2_USER }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            cd /home/ec2-user/redo
+            cd /home/ec2-user/app/redo
             git pull
             docker compose down
             docker compose build
