@@ -1,63 +1,63 @@
-name: Deploy to EC2
+# name: Deploy to EC2
 
-on:
-  push:
-    branches:
-      - main # main ブランチにプッシュされたときに実行
-    paths:
-      - 'backend/**'
-      - 'frontend/**'
+# on:
+#   push:
+#     branches:
+#       - main # main ブランチにプッシュされたときに実行
+#     paths:
+#       - 'backend/**'
+#       - 'frontend/**'
       
-jobs:
-  deploy:
-    runs-on: ubuntu-latest
+# jobs:
+#   deploy:
+#     runs-on: ubuntu-latest
 
-    steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
+#     steps:
+#       - name: Checkout repository
+#         uses: actions/checkout@v4
 
-      - name: Setup SSH
-        run: |
-          mkdir -p ~/.ssh
-          echo "${{ secrets.EC2_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
-          chmod 600 ~/.ssh/id_rsa
-          echo "EC2_HOST: ${{ secrets.EC2_HOST }}" # デバッグ用に表示
-          ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || (echo "Error scanning EC2 host" && exit 1)
+#       - name: Setup SSH
+#         run: |
+#           mkdir -p ~/.ssh
+#           echo "${{ secrets.EC2_SSH_KEY }}" | tr -d '\r' > ~/.ssh/id_rsa
+#           chmod 600 ~/.ssh/id_rsa
+#           echo "EC2_HOST: ${{ secrets.EC2_HOST }}" # デバッグ用に表示
+#           ssh-keyscan -H ${{ secrets.EC2_HOST }} >> ~/.ssh/known_hosts || (echo "Error scanning EC2 host" && exit 1)
 
-      - name: Install Node.js and pnpm
-        uses: pnpm/action-setup@v4
-        with:
-          version: 9 # pnpm のバージョンを指定
-          node-version: 22 # Node.js のバージョンを指定
-          cache: 'pnpm'
+#       - name: Install Node.js and pnpm
+#         uses: pnpm/action-setup@v4
+#         with:
+#           version: 9 # pnpm のバージョンを指定
+#           node-version: 22 # Node.js のバージョンを指定
+#           cache: 'pnpm'
           
-      - name: Install pnpm (System-wide)
-        run: npm install -g pnpm
+#       - name: Install pnpm (System-wide)
+#         run: npm install -g pnpm
 
-      - name: Deploy to EC2
-        run: |
-          ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
-          set -e # エラーが発生したら即終了
+#       - name: Deploy to EC2
+#         run: |
+#           ssh -o StrictHostKeyChecking=no ec2-user@${{ secrets.EC2_HOST }} << 'EOF'
+#           set -e # エラーが発生したら即終了
 
-          # アプリのディレクトリへ移動
-          cd /home/ec2-user/app/redo || exit 1
+#           # アプリのディレクトリへ移動
+#           cd /home/ec2-user/app/redo || exit 1
 
-          # GitHub から最新のコードを取得
-          git pull origin main || exit 1
+#           # GitHub から最新のコードを取得
+#           git pull origin main || exit 1
 
-          # JAR ファイルをビルド
-          cd backend || exit 1
-          chmod +x mvnw
-          ./mvnw clean package -DskipTests || exit 1
+#           # JAR ファイルをビルド
+#           cd backend || exit 1
+#           chmod +x mvnw
+#           ./mvnw clean package -DskipTests || exit 1
 
-          # systemctl 経由で Spring Boot アプリを再起動
-          sudo systemctl restart springboot-app.service || exit 1
+#           # systemctl 経由で Spring Boot アプリを再起動
+#           sudo systemctl restart springboot-app.service || exit 1
 
-          # Nuxt3 アプリビルド
-          cd /home/ec2-user/app/redo/frontend || exit 1
-          export NUXT_PUBLIC_API_BASE="http://15.168.89.85/api"
-          pnpm build || exit 1
-          pm2 restart redo_front || exit 1
+#           # Nuxt3 アプリビルド
+#           cd /home/ec2-user/app/redo/frontend || exit 1
+#           export NUXT_PUBLIC_API_BASE="http://15.168.89.85/api"
+#           pnpm build || exit 1
+#           pm2 restart redo_front || exit 1
 
-          echo "Deployment successful!"
-          EOF
+#           echo "Deployment successful!"
+#           EOF

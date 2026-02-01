@@ -2,10 +2,9 @@ spring:
   application:
     name: redo
   datasource:
-    driver-class-name: org.postgresql.Driver
-    url: jdbc:postgresql://localhost:5432/redo_db
-    username: redo
-    password: mypassword
+    url: ${SPRING_DATASOURCE_URL}
+    username: ${SPRING_DATASOURCE_USERNAME}
+    password: ${SPRING_DATASOURCE_PASSWORD}
 
   jdbc:
     template:
