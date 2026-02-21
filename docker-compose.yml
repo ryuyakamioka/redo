@@ -42,6 +42,13 @@ services:
       FREEE_COMPANY_ID: ${FREEE_COMPANY_ID}
     expose:
       - "8080"
+    logging:
+      driver: awslogs
+      options:
+        awslogs-region: ap-northeast-1
+        awslogs-group: redo-logs
+        awslogs-stream: app
+        awslogs-create-group: "true"
 
   frontend:
     build: ./frontend
