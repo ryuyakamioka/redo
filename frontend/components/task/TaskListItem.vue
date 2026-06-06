@@ -1,8 +1,8 @@
 <template>
   <tr
     @click="toggleExpanded"
-    class="hover:bg-gray-50 transition-colors cursor-pointer"
-    :class="{ 'bg-blue-50': isExpanded }"
+    class="transition-colors cursor-pointer"
+    :class="rowClass"
   >
       <td class="px-4 py-2 text-sm text-gray-900 border-r border-gray-200">
         <div class="flex items-center">
@@ -369,6 +369,17 @@ const showSuccessDialog = ref(false);
 const confirmChecked = ref(false);
 
 const localStatus = ref(props.task.taskStatus);
+
+const rowClass = computed(() => {
+  if (props.isExpanded) return 'bg-blue-50';
+  if (props.task.taskStatus === 'DONE' || !props.task.expectedDeliveryDate) return 'hover:bg-gray-50';
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const expected = new Date(props.task.expectedDeliveryDate + 'T00:00:00');
+  if (expected.getTime() < today.getTime()) return 'bg-red-50 hover:bg-red-100';
+  if (expected.getTime() === today.getTime()) return 'bg-yellow-50 hover:bg-yellow-100';
+  return 'hover:bg-gray-50';
+});
 
 // propsが更新されたらlocalStatusも更新
 watch(() => props.task.taskStatus, (newStatus) => {
